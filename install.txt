@@ -1,0 +1,8 @@
+install 목록
+pip install celery[redis]
+pip install django-celery-beat
+pip install django-celery-results
+pip install eventlet
+pip install selenium
+pip install bs4
+pip install openai

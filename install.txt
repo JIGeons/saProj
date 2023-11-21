@@ -7,8 +7,13 @@ pip install selenium
 pip install bs4
 pip install openai=0.28
 pip install django-cors-header
+pip install django-restframework
+pip install django-restfromework-simplejwt
 
 frontend install 목록
 npm install react-router-dom
 npm install styled-components
 npm install axios
+
+git에 push하기전에 아래 명령어 실행 후 push
+git config --global core.autocrlf false

@@ -32,7 +32,7 @@ OPEN_API_KEY = my_settings.API_KEY
 DEBUG = True
 
 # 사용자 모델을 설정
-AUTH_USER_MODEL = 'saApp.User'
+AUTH_USER_MODEL = 'users.User'
 
 ALLOWED_HOSTS = []
 
@@ -60,7 +60,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # app contain
     'saApp',
+    'users',
+    'posts',
+    # library contain
     'django_celery_beat',
     'django_celery_results',
     'rest_framework',

@@ -1,4 +1,4 @@
-install 목록
+backend install 목록
 pip install celery[redis]
 pip install django-celery-beat
 pip install django-celery-results
@@ -6,3 +6,8 @@ pip install eventlet
 pip install selenium
 pip install bs4
 pip install openai=0.28
+
+frontend install 목록
+npm install react-router-dom
+npm install styled-components
+npm install axios

@@ -6,6 +6,7 @@ pip install eventlet
 pip install selenium
 pip install bs4
 pip install openai=0.28
+pip install django-cors-header
 
 frontend install 목록
 npm install react-router-dom

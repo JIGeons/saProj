@@ -51,20 +51,19 @@ const Container3 = styled.div`
 `;
 
 function Login(props){
-    const [Company, setCompany] = useState([]);
-    const [CompanyId, setCompanyId] = useState('');
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [memberId, setMemberId] = useState('');
+    const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/login', { companyId, memberId, password });
-            if (response.data.success) {
-                setLoggedIn(true);
-            }
+            const response = await axios.post('http://localhost:8000/login/', { 
+                userId: userId,
+                password: password,
+            });
+
+            const accessToken = response.data.access;
         } catch (error) {
             alert("로그인에 실패하였습니다.");
             console.error(error);
@@ -72,15 +71,14 @@ function Login(props){
     };
 
     const handleLogout = () => {
-        setLoggedIn(false);
-        setMemberId('');
+        setUserId('');
         setPassword('');
     };
 
     useEffect(() => {
-        axios('http://localhost:3001/company')
+        axios('http://localhost:8000/login/')
             .then((res) => {
-                setCompany(res.data);
+                
             })
             .catch((error)=> console.log("Network Error : ", error));
     }, []);
@@ -89,20 +87,20 @@ function Login(props){
 
     return (
         <Wrapper>
-            <Header>
-                <h1 style={{color:"blue"}}>드시모네 로그인</h1>
-                <hr/>
-            </Header>
             <Container>
+                <Header>
+                    <h1 style={{color:"blue"}}>드시모네 로그인</h1>
+                    <hr/>
+                </Header>
                 <Container2 onSubmit={handleLogin}>
                     <Container3>
                         <input 
                             type="text"
                             placeholder="아이디"
-                            id="memberId"
-                            value={memberId}
-                            onChange={(e) => setMemberId(e.target.value)}
-                        />
+                            id="userId"
+                            value={userId}
+                            onChange={(e) => setUserId(e.target.value)}
+                        /><br/>
                         <input 
                             type="password"
                             placeholder="비밀번호"
@@ -122,5 +120,7 @@ function Login(props){
                 </Container2>
             </Container>
         </Wrapper>
-    )
+    );
 }
+
+export default Login

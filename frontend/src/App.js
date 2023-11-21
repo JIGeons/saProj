@@ -1,5 +1,5 @@
-import './App.css';
-import {Footer, LoginPage} from './component/page/Footer';
+import LoginPage from './component/page/LoginPage'
+import Footer from './component/page/Footer';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 
 function App() {

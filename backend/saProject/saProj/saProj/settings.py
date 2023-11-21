@@ -31,6 +31,9 @@ OPEN_API_KEY = my_settings.API_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# 사용자 모델을 설정
+AUTH_USER_MODEL = 'saApp.User'
+
 ALLOWED_HOSTS = []
 
 # Celery settings
@@ -60,9 +63,21 @@ INSTALLED_APPS = [
     'saApp',
     'django_celery_beat',
     'django_celery_results',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
+# REST_FRAMEWORK SETTINGS
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',    # cors관련 추가
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,6 +87,29 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 ROOT_URLCONF = 'saProj.urls'
 
 TEMPLATES_DIR = BASE_DIR / "templates"

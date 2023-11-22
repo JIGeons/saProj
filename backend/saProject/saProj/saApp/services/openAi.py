@@ -53,7 +53,7 @@ def review_evaluation():
         contents += review_content
         id_list.append(review_id)
 
-        if ((cnt % 50) == 0) or (len(reviews) == cnt):
+        if ((cnt % 15) == 0) or (len(reviews) == cnt):
             gpt_result = classification(contents)
             gb_list = gpt_result.split('\n')
             gb_list = [item for item in gb_list if item != '']

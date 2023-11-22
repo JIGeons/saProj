@@ -20,7 +20,7 @@ from saApp.views import product_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include("users.urls")),
-    path('posts/', include("posts.urls")),
+    path('users/', include('users.urls')),
+    path('posts/', include('posts.urls')),
     path('product/', product_page),
 ]

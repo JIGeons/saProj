@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Product = () => {
@@ -19,7 +20,10 @@ const Product = () => {
             <h1>Data from Django: </h1>
             <ul>
                 {products.map(product => (
-                    <li key={product.id}>{product.name}</li>
+                    <div>
+                        <li key={product.id}>{product.name}</li>
+                        <Link to={`/product/${product.id}`} > 상품 이동 </Link>
+                    </div>
                 ))}
             </ul>
         </div>

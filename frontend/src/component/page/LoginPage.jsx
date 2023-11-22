@@ -4,6 +4,9 @@ import LoginButton from "../ui/LoginButton";
 import styled from "styled-components";
 import axios from "axios";
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
 const Wrapper = styled.div`
     padding: 16px;
     width: calc(100% - 32px);
@@ -61,6 +64,11 @@ function Login(props){
             const response = await axios.post('http://localhost:8000/users/login/', { 
                 userId: userId,
                 password: password,
+            },{
+                headers: {
+                    'Content-Type': 'application/json',
+                    'csrfmiddlewaretoken': 'window.csrf_token',
+                }
             });
 
             const accessToken = response.data.access;

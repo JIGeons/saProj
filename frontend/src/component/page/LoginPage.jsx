@@ -123,8 +123,7 @@ function Login(props){
                     />
                 </Container2>
                 <Container2>
-                    <div style={{marginRight: 10}}> <Link to='/signup'>회원가입</Link></div>
-                    <div> <Link to='/signup'>비밀번호 찾기</Link></div>
+                    <div style={{marginRight: 10}}> <Link to='signup/'>회원가입</Link></div>
                 </Container2>
             </Container>
         </Wrapper>

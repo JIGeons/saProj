@@ -11,7 +11,7 @@ function App() {
       <div className="wrapper">
         <div className='contentWrapper'>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
+            <Route path="users/" element={<LoginPage />} />
             <Route path="users/signup" element={<Signup />} />
             <Route path="posts/productlist" element={<Product />} />
             <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />

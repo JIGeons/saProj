@@ -4,6 +4,7 @@ import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Signup from './component/page/Signup_page';
 import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
+import Login from './component/page/login';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <div className='contentWrapper'>
           <Routes>
             <Route path="users/" element={<LoginPage />} />
+            <Route path="users/login/" element={<Login />} />
             <Route path="users/signup" element={<Signup />} />
             <Route path="posts/productlist" element={<Product />} />
             <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />

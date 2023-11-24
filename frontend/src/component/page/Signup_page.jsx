@@ -18,11 +18,11 @@ const Signup = () => {
                 password2: password2,
                 name: name,
                 email: email,
-                csrfmiddlewaretoken: window.csrf_token,
             },
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': window.csrf_token,
                 },
             });
         } catch (error) {

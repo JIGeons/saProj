@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
@@ -33,7 +33,7 @@ const Form = styled.form`
 `;
 
 const InputWrapper = styled.div`
-  position: relative;
+  display: flex;
   width: 100%;
   margin-bottom: 20px;
 `;
@@ -43,12 +43,14 @@ const Input = styled.input`
   padding: 15px;
   font-size: 16px;
   color: #555;
-  border: 1px solid #ccc; /* 테두리 스타일 추가 */
+  border: none;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.8);
   outline: none;
   transition: background-color 0.3s, box-shadow 0.3s;
 
+  border: 1px solid #ccc; /* 테두리 스타일 추가 */
+  border-radius: 8px;
   overflow: hidden; /* 자식 요소의 border-radius를 적용하기 위해 overflow: hidden; 추가 */
 
   &:focus {
@@ -57,16 +59,8 @@ const Input = styled.input`
   }
 `;
 
-const EyeIcon = styled.span`
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  cursor: pointer;
-`;
-
 const Button = styled.button`
-  width: 100%;
+  margin-left: 10px; /* 아이디와 버튼 사이에 오른쪽 여백 추가 */
   padding: 15px;
   background-color: #2196f3;
   color: white;
@@ -85,13 +79,6 @@ const FooterText = styled.p`
   color: #aaa;
   font-size: 14px;
   margin-top: 20px;
-  white-space: nowrap;
-`;
-
-const ErrorText = styled.p`
-  color: #e53935;
-  font-size: 14px;
-  margin-top: 10px;
 `;
 
 const StyledLink = styled(Link)`
@@ -104,60 +91,76 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const Login = () => {
+const SignUp = () => {
   const [userId, setUserId] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
-  const [error, setError] = useState("");
+  const [isUserIdValid, setIsUserIdValid] = useState(true);
 
-  const handleLogin = (e) => {
+  const checkUserIdValidity = () => {
+    // 예시: 실제 중복 확인 로직을 구현
+    // 중복이 아니라면 setIsUserIdValid(true), 중복이면 setIsUserIdValid(false)를 호출
+  };
+
+  const handleSignUp = (e) => {
     e.preventDefault();
-
-    // 예시: 실제 로그인 로직은 여기에 구현
-    if (userId === "user" && password === "password") {
-      setError("");
-      setErrorCount(0); // 로그인 성공 시 에러 횟수 초기화
-      // 로그인 성공 시 처리
-    } else {
-      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
-    }
+    // 여기에 실제 회원가입 로직을 구현
+    console.log("회원가입 정보:", { username, email, password });
   };
 
   return (
     <Wrapper>
       <Container>
-        <Title>로그인</Title>
-        <Form onSubmit={handleLogin}>
+        <Title>회원가입</Title>
+        <Form onSubmit={handleSignUp}>
           <InputWrapper>
             <Input
-              type={showPassword ? "text" : "password"}
+              type="text"
               placeholder="아이디"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
             />
+            <Button type="button" onClick={checkUserIdValidity}>
+              중복 확인
+            </Button>
+          </InputWrapper>
+          {!isUserIdValid && (
+            <p style={{ color: "#e53935", fontSize: "14px", marginTop: "5px" }}>
+              중복된 아이디입니다.
+            </p>
+          )}
+          <InputWrapper>
+            <Input
+              type="text"
+              placeholder="사용자명"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </InputWrapper>
           <InputWrapper>
             <Input
-              type={showPassword ? "text" : "password"}
+              type="email"
+              placeholder="이메일"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </InputWrapper>
+          <InputWrapper>
+            <Input
+              type="password"
               placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <EyeIcon
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? "👁️" : "👁️‍🗨️"}
-            </EyeIcon>
           </InputWrapper>
-          {error && <ErrorText>{error}</ErrorText>}
-          <Button type="submit">로그인</Button>
+          <Button type="submit">가입하기</Button>
         </Form>
-        <FooterText>계정이 없으신가요?{" "}
-          <StyledLink to="/users/sign">회원가입</StyledLink></FooterText>
+        <FooterText>
+          이미 계정이 있으신가요?{" "}
+          <StyledLink to="/users/login">로그인</StyledLink>
+        </FooterText>
       </Container>
     </Wrapper>
   );
 };
-
-export default Login;

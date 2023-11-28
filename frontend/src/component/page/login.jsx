@@ -33,23 +33,25 @@ const Form = styled.form`
 `;
 
 const InputWrapper = styled.div`
-  position: relative;
+  display: flex;
+  position: relative; /* 추가 */
   width: 100%;
   margin-bottom: 20px;
+  border: 1px solid #ccc; /* 테두리 스타일 추가 */
+  border-radius: 8px;
+  overflow: hidden; /* 자식 요소의 border-radius를 적용하기 위해 overflow: hidden; 추가 */
 `;
 
 const Input = styled.input`
-  flex: 1; /* InputWrapper 내에서 남은 공간을 모두 차지하도록 설정 */
+  flex: 9;
   padding: 15px;
   font-size: 16px;
   color: #555;
-  border: 1px solid #ccc; /* 테두리 스타일 추가 */
+  border: none;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.8);
   outline: none;
   transition: background-color 0.3s, box-shadow 0.3s;
-
-  overflow: hidden; /* 자식 요소의 border-radius를 적용하기 위해 overflow: hidden; 추가 */
 
   &:focus {
     background-color: rgba(255, 255, 255, 1);
@@ -58,9 +60,10 @@ const Input = styled.input`
 `;
 
 const EyeIcon = styled.span`
+  flex: 1;
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 5px; /* Adjust the right position to move the eye icon inward */
   transform: translateY(-50%);
   cursor: pointer;
 `;

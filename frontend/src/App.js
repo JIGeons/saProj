@@ -12,9 +12,9 @@ function App() {
         <div className='contentWrapper'>
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/productlist" element={<Product />} />
-            <Route path='/productlist/:id' element={<ProductDetail />} />
+            <Route path="users/signup" element={<Signup />} />
+            <Route path="posts/productlist" element={<Product />} />
+            <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
           </Routes>
         </div>
         <Footer />
@@ -22,5 +22,4 @@ function App() {
     </BrowserRouter>
   );
 }
-
 export default App;

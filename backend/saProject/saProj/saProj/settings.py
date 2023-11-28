@@ -91,6 +91,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_CLASSES = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
 ]
@@ -111,10 +116,17 @@ CORS_ALLOW_HEADERS = [
     'dnt',
     'origin',
     'user-agent',
-    'x-csrftoken',
+    'X-CSRFToken',
+    'csrftoken',
+    'x-csrf-token',
     'x-requested-with',
+    'csrfmiddlewaretoken',
 ]
 ROOT_URLCONF = 'saProj.urls'
+
+# react와 django에 csrf 기본 설정값이 다르기 때문에 같게 만들어 줌
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
 
 TEMPLATES_DIR = BASE_DIR / "templates"
 TEMPLATES = [

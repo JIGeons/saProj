@@ -5,23 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38af93cd-4887-488d-847d-ce7b16ba16ee" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/saProj/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/saProj/templates/product_detail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/saProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/saProject.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saApp/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/posts/serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/serializer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/posts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saProj/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saProj/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/templates/product.html" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/templates/product.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/users/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/LoginPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/LoginPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../saProj/frontend/node_modules/.cache/default-development/0.pack" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../saProj/frontend/node_modules/.cache/default-development/index.pack" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/Signup_page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/Signup_page.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../install.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../install.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,8 +56,8 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/project/backend/saProject/saProj&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/project/backend/saProject&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -79,6 +83,10 @@
       <updated>1700559772109</updated>
       <workItem from="1700559773989" duration="3113000" />
       <workItem from="1700617883814" duration="2680000" />
+      <workItem from="1700632558917" duration="1620000" />
+      <workItem from="1700714765740" duration="973000" />
+      <workItem from="1700724805666" duration="2067000" />
+      <workItem from="1700787579487" duration="1857000" />
     </task>
     <servers />
   </component>

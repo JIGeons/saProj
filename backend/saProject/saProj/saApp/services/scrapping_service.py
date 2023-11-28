@@ -62,13 +62,13 @@ def scrapping():
         product.save()
 
     # 리뷰데이터를 models를 사용하여 데이터베이스에 저장
-    def insert_reviews(prd_id, review_num, title, user_name, date, count, content):
+    def insert_reviews(prd_id, review_num, user_name, title, date, count, content):
         product_id = find_product(prd_id)
         review = Review(
             prd=product_id,
             review_num=review_num,
-            title=title,
             user_name=user_name,
+            title=title,
             date=date,
             count=count,
             content=content

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Wrapper = styled.div`
   display: flex;
@@ -106,6 +107,7 @@ const StyledLink = styled(Link)`
     text-decoration: underline;
   }
 `;
+const url = "http://localhost:8000/users"
 
 const Login = () => {
   const [userId, setUserId] = useState("");
@@ -114,16 +116,24 @@ const Login = () => {
   const [errorCount, setErrorCount] = useState(0);
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async(e) => {
     e.preventDefault();
+    
+    const login = await axios.post(`${url}/login/`, {
+      userId: userId,
+      password: password
+    })
 
     // 예시: 실제 로그인 로직은 여기에 구현
-    if (userId === "user" && password === "password") {
-      setError("");
-      setErrorCount(0); // 로그인 성공 시 에러 횟수 초기화
+    if (login.data.success) {
+      alert("로그인 성공")
       // 로그인 성공 시 처리
+    } else if (login.data.status == 0){
+      setError("승인 대기 중 입니다. 관리자에게 문의 하세요");
+    } else if (login.data.status == 2){
+      setError("승인 거절입니다. 관리자에게 문의 하세요");
     } else {
-      setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+      setError("아이디 또는 비밀번호를 잘못 입력했습니다.")
     }
   };
 
@@ -134,7 +144,7 @@ const Login = () => {
         <Form onSubmit={handleLogin}>
           <InputWrapper>
             <Input
-              type={showPassword ? "text" : "password"}
+              type="text"
               placeholder="아이디"
               value={userId}
               onChange={(e) => setUserId(e.target.value)}

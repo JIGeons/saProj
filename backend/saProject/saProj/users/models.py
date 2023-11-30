@@ -13,6 +13,7 @@ class UserManager(BaseUserManager):
             email=self.normalize_email(email),
         )
 
+
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -41,7 +42,6 @@ class User(AbstractBaseUser):
     # is_active, is_admin 장고의 유저 모델의 필수 코드
     is_active = models.BooleanField(default=True)
     is_admin = models.IntegerField(default=False)
-    verification_code = models.CharField(max_length=6, blank=True, null=True)
 
     # 헬퍼 클래스 사용
     objects = UserManager()

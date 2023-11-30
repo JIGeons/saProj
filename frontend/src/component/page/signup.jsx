@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Wrapper = styled.div`
   display: flex;
@@ -128,20 +129,31 @@ const SignUp = () => {
   const [enteredVerificationCode, setEnteredVerificationCode] = useState("");
   const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
   const [resendcode, setResendCode] = useState(false);
+  const [isVerificationCodeEntered, setIsVerificationCodeEntered] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState(""); // 새로운 상태 변수 추가
+  const navigate = useNavigate();
 
-  const checkUserIdValidity = () => {
-    // 예시: 실제 중복 확인 로직을 구현
-    // 중복이 아니라면 setIsUserIdValid(true), 중복이면 setIsUserIdValid(false)를 호출
-    const isAvailable = true; // 실제로는 중복 여부를 체크해야 합니다.
+  const url = 'http://localhost:8000/users'
 
-    if (isAvailable) {
-      setUserIdCheckMessage("사용 가능한 아이디입니다.");
-      setIsUserIdValid(true);
-    } else {
-      setUserIdCheckMessage("이미 사용 중인 아이디입니다.");
-      setIsUserIdValid(false);
+  const checkUserIdValidity = async() => {
+    try {
+      const response = await axios.post(`${url}/findID/`, {
+        userid: userId,
+      });
+      console.log(response.data.success)
+
+      if (response.data.success) {
+        console.log('아이디를 생성할 수 있습니다.');
+        setUserIdCheckMessage("사용 가능한 아이디입니다.");
+        setIsUserIdValid(true);
+      } else {
+        console.log('중복된 아이디가 존재합니다.')
+        setUserIdCheckMessage("이미 사용 중인 아이디입니다.");
+        setIsUserIdValid(false);
+      }
+    } catch (error) {
+      console.error('에러 발생:', error);
     }
-
     checkSignUpButton();
   };
 
@@ -169,9 +181,16 @@ const SignUp = () => {
     setIsSignUpButtonDisabled(!isAllValid);
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async(e) => {
     e.preventDefault();
   
+    // 이메일 인증이 완료되었는지 확인
+    if (!isEmailVerified) {
+      setSignUpErrorMessage("가입 실패! 이메일 인증을 먼저 완료하세요.");
+      alert("가입 실패! 이메일 인증을 먼저 완료하세요.");
+      return;
+    }
+
     // 단순 예시: 유효성 검사 실패 시 에러 메시지 설정
     if (!userId) {
       setSignUpErrorMessage("아이디를 입력하세요.");
@@ -214,45 +233,80 @@ const SignUp = () => {
       alert("가입 실패! 비밀번호가 일치하지 않습니다.");
       return;
     }
+
+    if(!isVerificationCodeEntered) {
+      setSignUpErrorMessage("이메일 인증을 완료해주세요.");
+      alert("가입 실패! 이메일 인증을 완료해주세요.");
+      return;
+    }
   
-    // 여기에 실제 회원가입 로직을 구현
-    // 성공 시
-    setIsSignUpSuccess(true);
-  };
+    // 가입 성공 시
+    try {
+      const response = await axios.post(`${url}/signup/`,{
+        userId: userId,
+        password: password,
+        name: username,
+        email: email
+      })
 
-  const generateVerificationCode = () => {
-    // 임의의 인증 코드 생성 로직
-    return Math.floor(1000 + Math.random() * 9000).toString();
-  };
-
-  const sendVerificationCodeToEmail = (email, code) => {
-    // 이메일로 인증 코드 전송 로직
-    console.log(`Verification code ${code} sent to ${email}`);
-    // 여기에서는 실제로는 이메일로 인증 코드를 전송하는 로직을 호출해야 합니다.
-    setVerificationCode(code); // 테스트를 위해 코드 저장
-  };
-
-  const handleVerificationCodeSubmit = () => {
-    // 여기에서 입력된 인증 코드를 확인하는 로직을 구현해야 합니다.
-    if (verificationCode === enteredVerificationCode) {
-      setIsEmailVerified(true);
-      setSignUpErrorMessage("인증 확인!");
-    } else {
-      setSignUpErrorMessage("인증 코드가 올바르지 않습니다.");
+      if(response.data.success){
+        alert("가입 성공");
+        navigate("/users/login/");
+      }
+    } catch(error){
+      alert("가입 실패");
+      window.location.reload();
     }
   };
 
-  const handleSendVerificationCode = () => {
-    setResendCode(true);
-    // 이메일 확인을 위한 코드 전송
-    const generatedCode = generateVerificationCode(); // 이 함수는 임의로 작성된 함수입니다.
-    sendVerificationCodeToEmail(email, generatedCode); // 이 함수는 임의로 작성된 함수입니다.
-    setIsVerificationCodeSent(true);
-    // 이메일로 인증 코드를 다시 전송하는 로직을 구현해야 합니다.
-    // 이 함수를 호출하면 인증번호 전송 버튼은 "인증번호 재전송"으로 변경되어야 합니다.
-    const regeneratedCode = generateVerificationCode(); // 새로운 코드 생성
-    sendVerificationCodeToEmail(email, regeneratedCode); // 새로운 코드를 이메일로 전송
-    setVerificationCode(regeneratedCode); // 새로운 코드로 업데이트
+  const handleVerificationCodeSubmit = () => {
+    
+    console.log(verificationCode)
+    if (verificationCode === enteredVerificationCode) {
+      setIsEmailVerified(true);
+      alert("인증 확인!");
+      setIsVerificationCodeEntered(true); // 코드가 확인되면 true로 설정
+    } else {
+      alert("인증 코드가 올바르지 않습니다.")
+    }
+  };
+
+  const handleSendVerificationCode = async() => {
+    // 이메일이 유효한지 확인
+    const isEmailValid = validateEmail(email);
+
+    if (!isEmailValid) {
+      setEmailErrorMessage("이메일을 올바르게 입력해주세요.");
+      return;
+    } else {
+      try {
+        const response = await axios.post(`${url}/send_code/`, {
+          email: email,
+        });
+  
+        if (response.data.success) {
+          console.log('코드를 성공적으로 보냈습니다.');
+          setResendCode(true);
+          setIsVerificationCodeSent(true);
+          setVerificationCode(response.data.verification_code)
+
+                   // 이메일이 성공적으로 전송되었으므로 오류 메시지 초기화
+          setEmailErrorMessage("");
+        } else {
+          console.log('이미 존재하는 이메일');
+          setEmailErrorMessage("이미 존재 하는 이메일입니다. 다른 이메일을 적어주세요");
+        }
+      } catch (error) {
+        console.error('에러 발생:', error);
+      }      
+
+    }
+  };
+
+  // 이메일 형식을 확인하는 함수
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   return (
@@ -285,20 +339,25 @@ const SignUp = () => {
             />
           </InputWrapper>
           <InputWrapper>
-            <Input
-              type="email"
-              placeholder="이메일"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <SendButton
-              type="button"
-              onClick={handleSendVerificationCode}
-              dangerouslySetInnerHTML={{
-                __html: resendcode ? "인증번호<br/>재전송" : "인증번호<br/>전송",
-              }}
-            />
+              <Input
+                type="email"
+                placeholder="이메일"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <SendButton
+                type="button"
+                onClick={handleSendVerificationCode}
+                dangerouslySetInnerHTML={{
+                  __html: resendcode ? "인증번호<br/>재전송" : "인증번호<br/>전송",
+                }}
+              />
           </InputWrapper>
+          {emailErrorMessage && (
+            <p style={{ color: "#e53935", fontSize: "14px", marginTop: "5px" }}>
+              {emailErrorMessage}
+            </p>
+          )}
           {isVerificationCodeSent && (
             <>
               <InputWrapper>
@@ -307,8 +366,9 @@ const SignUp = () => {
                   placeholder="인증 코드 입력"
                   value={enteredVerificationCode}
                   onChange={(e) => setEnteredVerificationCode(e.target.value)}
+                  disabled={isVerificationCodeEntered} // 코드가 확인되면 입력을 비활성화합니다
                 />
-                <Button onClick={handleVerificationCodeSubmit}>
+                <Button type="button" onClick={handleVerificationCodeSubmit}>
                   인증 확인
                 </Button>
               </InputWrapper>
@@ -336,7 +396,7 @@ const SignUp = () => {
               {passwordMatchMessage}
             </p>
           )}
-          <Button type="submit" disabled={isSignUpButtonDisabled}>
+          <Button type="submit">
             가입하기
           </Button>
         </Form>

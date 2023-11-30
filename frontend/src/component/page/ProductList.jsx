@@ -162,6 +162,7 @@ const ProductList = () => {
                     <ProductImage src={product.src} alt={product.name} />
                     <ProductName>{product.name}</ProductName>
                     <ProductPrice>{product.price.toLocaleString()}원</ProductPrice>
+                    <div><p>{product.review_count}, {product.review_good}, {product.review_bad}</p></div>
                 </Link>
             </Product>
         ))}

@@ -19,6 +19,7 @@ from . import my_settings
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -29,12 +30,26 @@ DATABASES = my_settings.DATABASES
 OPEN_API_KEY = my_settings.API_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 # 사용자 모델을 설정
 AUTH_USER_MODEL = 'users.User'
 
 ALLOWED_HOSTS = []
+
+# 사용자 인증 실패 시, 리다이렉트 할 기본 경로
+LOGIN_URL = ('http://localhost:3000/users/login/')
+
+# 이메일 백엔드 설정
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# SMTP 서버 설정
+EMAIL_HOST = 'smtp.naver.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = my_settings.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = my_settings.EMAIL_HOST_PASSWORD
+
 
 # Celery settings
 CELERY_BROKER_URL = 'redis://localhost:6379'
@@ -69,6 +84,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 

@@ -63,9 +63,10 @@ def scrapping():
 
     # 리뷰데이터를 models를 사용하여 데이터베이스에 저장
     def insert_reviews(prd_id, review_num, user_name, title, date, count, content):
-        product_id = find_product(prd_id)
+        product = find_product(prd_id)
+
         review = Review(
-            prd=product_id,
+            prd=product,
             review_num=review_num,
             user_name=user_name,
             title=title,
@@ -73,6 +74,7 @@ def scrapping():
             count=count,
             content=content
         )
+
         review.save()
 
     # 크롤링한 page_source를 파싱하고 board_info를 return하는 함수
@@ -171,8 +173,12 @@ def scrapping():
             # 리스트의 길이 확인
             board_len = len(board_info)
 
+            # board_len < 2인 경우는 페이지가 아직 로딩이 안되서 리뷰 board가 아직 안 뜬 것이므로 continue를 해서 board가 뜨기 까지 기다린다.
+            if board_len < 2:
+                continue
+
             # 리뷰가 없는 경우는 바로 break (리스트의 맨 처음에는 header가 들어있고 마지막줄에는 '리뷰가 없습니다' 가 들어있으므로 리뷰가 없을 때 list의 길이는 2)
-            if board_len < 3:
+            if board_len == 2:
                 print("리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
                 break
 
@@ -219,15 +225,8 @@ def scrapping():
                 # title에 가끔 작은 따옴표를 사용하시는 분이 있어서 작은 따옴표가 있으면 삭제
                 title = title.replace('\'', '')
 
-                try:
-                    # 크롤링한 데이터를 데이터베이스에 저장
-                    insert_reviews(prd_id, review_num, user_name, title, date, count, content)
-                except Exception as e:
-                    # 상품을 데이터 베이스에 저장을 하다가 오류가 생겼을 때 해당 상품의 이름, 리뷰 번호, 내용을 출력 (오류가 난 리뷰의 위치를 찾기 위함)
-                    print(f"상품 = {prd_name},  리뷰 번호 = {review_num}, 내용 = {content}")
-                    # 오류 내용을 출력하여 어떤 오류가 났는지 확인함
-                    print("오류 : ", e)
-                    break
+                # 크롤링한 데이터를 데이터베이스에 저장
+                insert_reviews(prd_id, review_num, user_name, title, date, count, content)
 
             # 현재 리뷰의 첫 번째 리뷰의 번호를 이전 리뷰번호로 저장
             pre_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)

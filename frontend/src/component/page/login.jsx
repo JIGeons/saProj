@@ -126,6 +126,7 @@ const Login = () => {
 
     // 예시: 실제 로그인 로직은 여기에 구현
     if (login.data.success) {
+      console.log(login.data.token)
       alert("로그인 성공")
       // 로그인 성공 시 처리
     } else if (login.data.status == 0){
@@ -167,7 +168,7 @@ const Login = () => {
           <Button type="submit">로그인</Button>
         </Form>
         <FooterText>계정이 없으신가요?{" "}
-          <StyledLink to="/users/sign">회원가입</StyledLink></FooterText>
+          <StyledLink to="/signup">회원가입</StyledLink></FooterText>
       </Container>
     </Wrapper>
   );

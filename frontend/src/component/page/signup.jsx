@@ -122,7 +122,6 @@ const SignUp = () => {
   const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
   const [userIdCheckMessage, setUserIdCheckMessage] = useState("");
   const [isSignUpButtonDisabled, setIsSignUpButtonDisabled] = useState(true);
-  const [isSignUpSuccess, setIsSignUpSuccess] = useState(false);
   const [signUpErrorMessage, setSignUpErrorMessage] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
@@ -251,7 +250,7 @@ const SignUp = () => {
 
       if(response.data.success){
         alert("가입 성공");
-        navigate("/users/login/");
+        navigate("/");
       }
     } catch(error){
       alert("가입 실패");
@@ -402,7 +401,7 @@ const SignUp = () => {
         </Form>
         <FooterText>
           이미 계정이 있으신가요?{" "}
-          <StyledLink to="/users/login">로그인</StyledLink>
+          <StyledLink to="/">로그인</StyledLink>
         </FooterText>
       </Container>
     </Wrapper>

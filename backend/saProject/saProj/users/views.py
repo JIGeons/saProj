@@ -1,4 +1,7 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.utils.decorators import method_decorator
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.shortcuts import render
 from rest_framework.views import APIView
@@ -80,7 +83,7 @@ class SignUpView(APIView):
             return Response({'success': False, 'message': 'signup Failed'}, status=400)
 
 class SendEmailView(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         email = request.data.get('email')
         try:
             print("이메일 : ", email)
@@ -109,4 +112,24 @@ class findIdView(APIView):
         except User.DoesNotExist:
             # 가입 되어 있지 않은 아이디일 경우 success response
             return JsonResponse({'success': True})
+
+class getUsersView(APIView):
+    @login_required
+    def get(self, request):
+        user = request.user
+        users = User.objects.filter(is_superuser=False)
+
+        users_serializer = UserSerializer(users)
+
+        # 페이지 번호 및 페이지 크기 가져오기
+        page = request.GET.get('page')
+        page_size = request.GET.get('page_size')
+
+        paginator = Paginator(users, page_size)
+
+        return Response({
+            "username": user,
+            "users": users_serializer.data
+        })
+
 # Create your views here.

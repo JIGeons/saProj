@@ -1,11 +1,10 @@
-import LoginPage from './component/page/LoginPage'
-import Footer from './component/page/Footer';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Signup from './component/page/Signup_page';
+import Login from './component/page/login';
+import Signup from './component/page/signup';
+import Footer from './component/page/Footer';
 import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
-import Login from './component/page/login';
-import Sign from './component/page/signup';
+import AdminPage from "./component/page/adminPage";
 
 function App() {
   return (
@@ -13,12 +12,11 @@ function App() {
       <div className="wrapper">
         <div className='contentWrapper'>
           <Routes>
-            <Route path="users/" element={<LoginPage />} />
-            <Route path="users/login/" element={<Login />} />
-            <Route path="users/signup" element={<Signup />} />
-            <Route path="users/sign" element={<Sign />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/signup/" element={<Signup />} />
             <Route path="posts/productlist" element={<Product />} />
             <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
+            <Route path="/adminPage" element={<AdminPage />} />
           </Routes>
         </div>
         <Footer />

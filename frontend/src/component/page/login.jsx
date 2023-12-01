@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Wrapper = styled.div`
@@ -113,8 +113,8 @@ const Login = () => {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async(e) => {
     e.preventDefault();
@@ -124,12 +124,13 @@ const Login = () => {
       password: password
     })
 
-    // 예시: 실제 로그인 로직은 여기에 구현
-    if (login.data.success) {
-      console.log(login.data.token)
-      alert("로그인 성공")
-      // 로그인 성공 시 처리
-    } else if (login.data.status == 0){
+    // 로그인 성공 시 처리
+    if (login.data.success) {      
+      alert("로그인 성공");
+      navigate(`/adminPage/user/${userId}`);
+    } 
+    // 로그인 실패 시
+    else if (login.data.status == 0){
       setError("승인 대기 중 입니다. 관리자에게 문의 하세요");
     } else if (login.data.status == 2){
       setError("승인 거절입니다. 관리자에게 문의 하세요");

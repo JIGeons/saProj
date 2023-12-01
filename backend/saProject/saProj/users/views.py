@@ -1,9 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.utils.decorators import method_decorator
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
@@ -11,6 +12,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
+from .decorators import account_ownership_required
 from .models import User
 from .serializer import UserSerializer
 from rest_framework.authtoken.models import Token
@@ -23,7 +28,7 @@ class LoginView(APIView):
         password = request.data.get('password')
         
         try:
-            user = authenticate(userid=userid, password=password)
+            user = authenticate(request, userid=userid, password=password)
         except:
             print("사용자 없음")
 
@@ -33,17 +38,8 @@ class LoginView(APIView):
         if user is not None:
             # 승인완료 상태
             if user.status == 1:
-
-                # 기존 토큰이 있다면 삭제
-                Token.objects.filter(user=user).delete()
-
-                login(request, user)
-                token = Token.objects.create(user=user)
-                token.expires = timezone.now() + timezone.timedelta(hours=6)
-                token.save()
                 return Response({
-                    "success": True,
-                    "token": token.key
+                    "success": True
                 }, status=status.HTTP_200_OK)
             # 승인 대기 상태
             elif user.status == 0:
@@ -114,22 +110,30 @@ class findIdView(APIView):
             return JsonResponse({'success': True})
 
 class getUsersView(APIView):
-    @login_required
     def get(self, request):
-        user = request.user
-        users = User.objects.filter(is_superuser=False)
+        userid = self.request.GET.get('id')
+        currentPage = self.request.GET.get('page')
 
-        users_serializer = UserSerializer(users)
+        user = User.objects.get(userid=userid)
+        users = User.objects.filter(is_admin=False)
 
-        # 페이지 번호 및 페이지 크기 가져오기
-        page = request.GET.get('page')
-        page_size = request.GET.get('page_size')
+        paginator = Paginator(users, 10)    # 페이지당 10개의 유저 정보를 보여준다.
 
-        paginator = Paginator(users, page_size)
+        try:
+            users_page = paginator.page(currentPage)
+        except EmptyPage:
+            return Response({'detail': 'Invalid page.'}, status=400)
 
-        return Response({
-            "username": user,
-            "users": users_serializer.data
-        })
+        users_serializer = UserSerializer(users, many=True)
 
+        response_data = {
+            'users': users_serializer.data,
+            'admin': user.name,
+            'total_pages': paginator.num_pages
+        }
+        print(response_data)
+        return Response(response_data, status=200)
+
+    def post(self, request):
+        pass
 # Create your views here.

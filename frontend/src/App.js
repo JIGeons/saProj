@@ -1,11 +1,10 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from './component/page/login';
-import Signup from './component/page/signup';
+import Login from './component/page/Login';
+import Signup from './component/page/Signup';
 import Footer from './component/page/Footer';
 import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
-import AdminPage from "./component/page/adminPage";
-
+import AdminPage from './component/page/AdminPage';
 function App() {
   return (
     <BrowserRouter>
@@ -14,9 +13,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup/" element={<Signup />} />
-            <Route path="posts/productlist" element={<Product />} />
+            <Route path="posts/productlist/" element={<Product />} />
             <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
-            <Route path="/adminPage" element={<AdminPage />} />
+            <Route path="/adminPage/user/:id" element={<AdminPage />} />
           </Routes>
         </div>
         <Footer />

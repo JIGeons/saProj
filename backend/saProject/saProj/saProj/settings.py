@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 from celery.schedules import crontab
@@ -37,9 +37,6 @@ AUTH_USER_MODEL = 'users.User'
 
 ALLOWED_HOSTS = []
 
-# 사용자 인증 실패 시, 리다이렉트 할 기본 경로
-LOGIN_URL = ('http://localhost:3000/users/login/')
-
 # 이메일 백엔드 설정
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -66,8 +63,11 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-# Application definition
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
+LOGIN_URL = '/users/login/'
+
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -92,18 +92,18 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',    # cors관련 추가
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

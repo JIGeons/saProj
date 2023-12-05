@@ -115,7 +115,7 @@ class getUsersView(APIView):
         currentPage = self.request.GET.get('page')
 
         user = User.objects.get(userid=userid)
-        users = User.objects.filter(is_admin=False)
+        users = User.objects.filter(is_admin=False).values().order_by('name')
 
         paginator = Paginator(users, 10)    # 페이지당 10개의 유저 정보를 보여준다.
 
@@ -124,14 +124,13 @@ class getUsersView(APIView):
         except EmptyPage:
             return Response({'detail': 'Invalid page.'}, status=400)
 
-        users_serializer = UserSerializer(users, many=True)
-
         response_data = {
-            'users': users_serializer.data,
+            'users': list(users_page),
             'admin': user.name,
-            'total_pages': paginator.num_pages
+            'total': users.count(),
         }
-        print(response_data)
+
+        print(users.count())
         return Response(response_data, status=200)
 
     def post(self, request):

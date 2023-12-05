@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Pagination from 'react-js-pagination';
+
+import CustomPaginationContainer from '../ui/CustompagContainer';
+import CustomPaginationStyled from '../ui/CustomPagination';
 
 
 const url = 'http://localhost:8000/users'
@@ -8,9 +12,11 @@ const url = 'http://localhost:8000/users'
 const AdminPage = () => {
   const [Admin, setAdmin] = useState("");
   const [users, setUsers] = useState([]);
+  const [total, setTotal] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedApprovalUserId, setSelectedApprovalUserId] = useState(null);
   const [selectedToggleAdminUserId, setSelectedToggleAdminUserId] = useState(null);
+  const [totalPage, setTotalPage] = useState("");
 
   const params = useParams();
   const userid = params.id
@@ -22,6 +28,7 @@ const AdminPage = () => {
     .then((response) =>{
       setAdmin(response.data.admin);
       setUsers(response.data.users);
+      setTotal(response.data.total);
     })
     .catch((error) => {
       console.error("Error fetching data: ", error);
@@ -36,8 +43,9 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${url}/getUsers/page=${currentPage}`);
+      const response = await axios.get(`${url}/getUsersPaging/page=${currentPage}`);
       setUsers(response.data.users);
+      setTotalPage(response.data.total_pages);
     } catch (error) {
       console.error('Error fetching user list:', error.message);
     }
@@ -83,6 +91,10 @@ const AdminPage = () => {
     // 클릭된 상태 초기화
     setSelectedApprovalUserId(null);
     setSelectedToggleAdminUserId(null);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -147,17 +159,18 @@ const AdminPage = () => {
         Save Changes
       </button>
       {/* 페이지 네이션 */}
-      <div>
-        <button onClick={goToPrevPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        {[...Array(10)].map((_, index) => (
-          <button key={index} onClick={() => setCurrentPage(index + 1)} disabled={currentPage === index + 1}>
-            {index + 1}
-          </button>
-        ))}
-        <button onClick={goToNextPage}>Next</button>
-      </div>
+      <CustomPaginationContainer>
+          <Pagination
+            style={CustomPaginationStyled}
+            activePage={currentPage}
+            itemsCountPerPage={10}
+            totalItemsCount={total}
+            pageRangeDisplayed={10}
+            prevPageText={"<"}
+            nextPageText={">"}
+            onChange={handlePageChange}
+          />
+        </CustomPaginationContainer>
     </div>
   );
 };

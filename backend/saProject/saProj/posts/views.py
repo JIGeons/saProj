@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
@@ -42,14 +43,58 @@ class PrdDetailView(APIView):
         product_data = Product.objects.get(id=prd_id)
         product_serializer = ProductSerializer(product_data, many=False)
 
-        product_review_data = Review.objects.filter(prd_id=prd_id)
-        prd_review_serializer = ReviewSerializer(product_review_data, many=True)
+        product_review_data = Review.objects.filter(prd_id=prd_id).values().order_by('id')
+        good = product_review_data.filter(good_or_bad=1).count()
+        bad = product_review_data.filter(good_or_bad=0).count()
+
+        current_page = 1
+
+        paginator = Paginator(product_review_data, 10)
+
+        try:
+            review_page = paginator.page(current_page)
+        except EmptyPage:
+            return Response({'detail': 'Invalid page.'}, status=400)
 
         response_data = {
+            'review_page': list(review_page),
             'product': product_serializer.data,
-            'reviews': prd_review_serializer.data,
+            'total': product_review_data.count(),
+            'good': good,
+            'bad': bad
         }
+
         return Response(response_data, status=status.HTTP_200_OK)
+
+class DetailPaging(APIView):
+    def get(self, request):
+        print("안녕")
+        prd_id = self.request.GET.get('prdid')
+        current_page = self.request.GET.get('page')
+        state = self.request.GET.get('state')
+
+        print(state)
+
+        if state == 'all':
+            review_data = Review.objects.filter(prd_id=prd_id).values().order_by('id')
+        elif state == 'good':
+            review_data = Review.objects.filter(prd_id=prd_id).filter(good_or_bad=1).values().order_by('id')
+        elif state == 'bad':
+            review_data = Review.objects.filter(prd_id=prd_id).filter(good_or_bad=0).values().order_by('id')
+        else:
+            return Response({'detail': 'Invalid state.'}, status=400)
+
+        paginator = Paginator(review_data, 10)
+
+        try:
+            review_page = paginator.page(current_page)
+        except EmptyPage:
+            return Response({'detail': 'Invalid page.'}, status=400)
+
+        return Response({
+            "reviews": list(review_page),
+            "total": review_data.count()
+        }, status=200)
 
 
 # Create your views here.

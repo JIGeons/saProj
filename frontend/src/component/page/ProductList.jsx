@@ -159,7 +159,7 @@ const styles = {
 }
 
 const ReviewModal = styled.div`
-  display: ${({ showReviewModal }) => (showReviewModal ? "block" : "none")};
+  display: ${({ showReviewModal }) => (showReviewModal ? "flex" : "none")};
   position: fixed;
   top: 0;
   left: 0;
@@ -174,12 +174,67 @@ const ReviewModalContent = styled.div`
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
-  max-width: 50%;
+  width: 50%;
   text-align: center;
+  max-height: 85vh; /* 최대 높이를 설정하여 화면 크기에 따라 조절 */
+`;
+
+const ReviewProductContainer = styled.div`
+  width: 100%; /* 100%로 변경 */
+  max-height: 40vh; /* ProductContainer에 스크롤을 적용할 최대 높이 설정 */
+  overflow-y: auto; /* 스크롤이 필요한 경우만 표시 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+`;
+
+const ColumnFlexContainer = styled.div`
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const CheckboxContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  text-align: left;
+  border: 1px solid black;
+`;
+
+const ReviewProduct = styled.div`
+  display: flex;
+  width: calc(33.33% - 20px);
+  text-align: center;
+  margin-top: 3px;
+  position: relative;
 `;
 
 const ReviewModalTitle = styled.h2`
   margin-bottom: 20px;
+`;
+
+const ReviewModalInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const ReviewDateInputLabel = styled.label`
+  width: 20%;
+  margin-right: 10px;
+  font-size: 16px;
+  color: #333;
 `;
 
 const ReviewModalInput = styled.input`
@@ -199,10 +254,37 @@ const ReviewModalButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s;
   margin-right: 10px;
+  margin-top: 10px;
 
   &:hover {
     background-color: #218838; /* 마우스 호버 시 더 진한 초록색 */
   }
+`;
+
+const DownloadOptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+`;
+
+const DownloadCheckbox = styled.input`
+  margin-right: 5px;
+`;
+
+const ProductLabelContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+`;
+
+const ProductLabel = styled.label`
+  font-size: 14px;
+  color: #333;
+`;
+
+const ProductCheckbox = styled.input`
+  margin-right: 5px;
 `;
 
 const handleMouseEnter = (productId) => {
@@ -218,9 +300,15 @@ const ProductList = () => {
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewStartDate, setReviewStartDate] = useState("");
   const [reviewEndDate, setReviewEndDate] = useState("");
+
+  const [downloadAll, setDownloadAll] = useState("");
+  const [downloadSelected, setDownloadSelected] = useState("");
+
+  const [excelDownload, setExcelDownload] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/posts/product_list/')
@@ -266,6 +354,29 @@ const ProductList = () => {
     setSelectedImage(null);
   };
 
+  const handleDownloadAllChange = () => {
+    setDownloadAll(!downloadAll);
+    setDownloadSelected(false);
+  };
+
+  const handleDownloadSelectedChange = () => {
+    setDownloadSelected(!downloadSelected);
+    setDownloadAll(false);
+  };
+
+  const handleProductCheckboxChange = (productId) => {
+    // 추가된 부분: 상품 체크박스 변경 처리
+    if (excelDownload.includes(productId)) {
+      // 이미 선택된 경우 제거
+      setExcelDownload(prevState => prevState.filter(id => id !== productId));
+    } else {
+      // 선택되지 않은 경우 추가
+      setExcelDownload(prevState => [...prevState, productId]);
+    }
+
+    console.log(excelDownload)
+  };
+
   const handleReviewDownload = () => {
     // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
     console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
@@ -273,7 +384,9 @@ const ProductList = () => {
     setShowReviewModal(false);
     setReviewStartDate("");
     setReviewEndDate("");
+    setExcelDownload([]);
   };
+
   return (
     <Container>
       
@@ -326,22 +439,87 @@ const ProductList = () => {
           <ReviewModal showReviewModal={showReviewModal}>
             <ReviewModalContent>
               <ReviewModalTitle>리뷰 다운로드</ReviewModalTitle>
-              <ReviewModalInput
-                type="date"
-                value={reviewStartDate}
-                onChange={(e) => setReviewStartDate(e.target.value)}
-                placeholder="시작 날짜"
-              />
-              <ReviewModalInput
-                type="date"
-                value={reviewEndDate}
-                onChange={(e) => setReviewEndDate(e.target.value)}
-                placeholder="종료 날짜"
-              />
+              <FlexContainer>
+                <ColumnFlexContainer>
+                  <ReviewModalInputContainer>
+                    <ReviewDateInputLabel>시작 날짜:</ReviewDateInputLabel>
+                    <ReviewModalInput
+                      type="date"
+                      value={reviewStartDate}
+                      onChange={(e) => setReviewStartDate(e.target.value)}
+                      placeholder="시작 날짜"
+                    />
+                  </ReviewModalInputContainer>
+                  <ReviewModalInputContainer>
+                    <ReviewDateInputLabel>종료 날짜:</ReviewDateInputLabel>
+                    <ReviewModalInput
+                      type="date"
+                      value={reviewEndDate}
+                      onChange={(e) => setReviewEndDate(e.target.value)}
+                      placeholder="종료 날짜"
+                    />
+                  </ReviewModalInputContainer>
+                  </ColumnFlexContainer>
+                  <CheckboxContainer>
+                    <div>
+                      <input
+                        type="checkbox"
+                      />
+                      <label>일주일</label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                      />
+                      <label>한달</label>
+                    </div>
+                    <div>
+                      <input
+                        type="checkbox"
+                      />
+                      <label>일년</label>
+                    </div>
+                  </CheckboxContainer>
+              </FlexContainer>
+              <p style={{ color: 'blue' }}>※ 시작 날짜를 선택 안하면 전체 기간의 리뷰가 다운로드됩니다.</p>
+              <DownloadOptionsContainer>
+                <DownloadCheckbox
+                  type="checkbox"
+                  id="downloadAll"
+                  checked={downloadAll}
+                  onChange={handleDownloadAllChange}
+                />
+                <label htmlFor="downloadAll">전체 상품 다운로드</label>
+              </DownloadOptionsContainer>
+              <DownloadOptionsContainer>
+                <DownloadCheckbox
+                  type="checkbox"
+                  id="downloadSelected"
+                  checked={downloadSelected}
+                  onChange={handleDownloadSelectedChange}
+                />
+                <label htmlFor="downloadSelected">일부 상품 다운로드</label>
+                {downloadSelected && (
+                  <ReviewProductContainer>
+                    {products.map(product => (
+                      <ReviewProduct key={product.id}>
+                        <ProductCheckbox
+                          type="checkbox"
+                          id={`productCheckbox${product.id}`}
+                          onChange={() => handleProductCheckboxChange(product.id)}
+                        />
+                        <ProductLabelContainer>
+                          <ProductLabel htmlFor={`productCheckbox${product.id}`}>{product.name}</ProductLabel>
+                        </ProductLabelContainer>
+                      </ReviewProduct>
+                    ))}
+                  </ReviewProductContainer>
+                )}
+              </DownloadOptionsContainer>
               <ReviewModalButton onClick={handleReviewDownload}>
                 다운로드
               </ReviewModalButton>
-              <ReviewModalButton onClick={() => setShowReviewModal(false)}>
+              <ReviewModalButton onClick={() => {setShowReviewModal(false); setExcelDownload([]);}}>
                 취소
               </ReviewModalButton>
             </ReviewModalContent>

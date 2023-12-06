@@ -21,6 +21,27 @@ from .serializer import UserSerializer
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
 
+def sendEmail(function, email, name):
+    from_email = 'rlrjtlrl2@naver.com'  # 보내는 이메일 주소
+    to_email = [email]
+
+    if function == 'signUp':
+        verification_code = get_random_string(length=6, allowed_chars='1234567890')
+        subject = '회원가입 인증코드'
+        message = f'{name}님의 회원가입을 위한 인증코드는 다음과 같습니다. {verification_code}'
+
+        send_mail(subject, message, from_email, to_email, fail_silently=False)
+
+        return verification_code
+    elif function == 'userUpdateApprove':
+        subject = '회원가입 승인 완료'
+        message = f'{name}님의 회원가입 승인이 완료 되었습니다.\n이제부터 로그인이 가능해집니다.'
+    elif function == 'userUpdateReject':
+        subject = '회원가입 승인 거절'
+        message = f'{name}님의 회원가입 승인이 거절 되었습니다.\n거절 사유는 관리자에게 문의해주세요.'
+
+    send_mail(subject, message, from_email, to_email, fail_silently=False)
+
 class LoginView(APIView):
     def post(self, request):
         print("전송")
@@ -88,13 +109,7 @@ class SendEmailView(APIView):
             return JsonResponse({'success':False, 'error': '이미 가입된 이메일입니다.'})
         except User.DoesNotExist:
             # 가입되지 않은 이메일일 경우 인증 코드 생성 및 전송
-            verification_code = get_random_string(length=6, allowed_chars='1234567890')
-            subject = '회원가입 인증코드'
-            message = f'회원가입을 위한 인증코드는 다음과 같습니다. {verification_code}'
-            from_email = 'rlrjtlrl2@naver.com' # 보내는 이메일 주소
-            to_email = [email]
-
-            send_mail(subject, message, from_email, to_email, fail_silently=False)
+            verification_code = sendEmail(function='signUp', email=user.email, name=user.name)
 
             return JsonResponse({'success': True, 'verification_code': verification_code})
 
@@ -113,9 +128,16 @@ class getUsersView(APIView):
     def get(self, request):
         userid = self.request.GET.get('id')
         currentPage = self.request.GET.get('page')
+        state = self.request.GET.get('state')
 
         user = User.objects.get(userid=userid)
-        users = User.objects.filter(is_admin=False).values().order_by('name')
+
+        if state == 'approve':
+            users = User.objects.filter(status=0).values().order_by('name')
+        elif state == 'user':
+            users = User.objects.exclude(userid=userid).filter(status=1).values().order_by('name')
+        else:
+            return Response({"message": "Invalid data."}, status=400)
 
         paginator = Paginator(users, 10)    # 페이지당 10개의 유저 정보를 보여준다.
 
@@ -133,6 +155,55 @@ class getUsersView(APIView):
         print(users.count())
         return Response(response_data, status=200)
 
+class UserUpdate(APIView):
     def post(self, request):
-        pass
+        userid = request.data.get('id')
+        currentPage = request.data.get('page')
+        state = request.data.get('state')
+        update = request.data.get('update')
+        status = False
+
+        for updateUser in update:
+            try:
+                user_update = User.objects.get(userid=updateUser.get('userId'))
+                if updateUser.get('status') != None:
+                    user_update.status = updateUser.get('status')
+                    status = True
+                elif updateUser.get('admin') != None:
+                    user_update.is_admin = updateUser.get('admin')
+
+                user_update.save()
+
+                if status and user_update.status == 1:
+                    sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
+                elif status and user_update.status == 2:
+                    sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
+            except :
+                return Response({"message": "user status update failed"}, status=400)
+
+
+        user = User.objects.get(userid=userid)
+
+        if state == 'approve':
+            users = User.objects.filter(status=0).values().order_by('name')
+        elif state == 'user':
+            users = User.objects.exclude(userid=userid).filter(status=1).values().order_by('name')
+        else:
+            return Response({"message": "Invalid data."}, status=400)
+
+        paginator = Paginator(users, 10)  # 페이지당 10개의 유저 정보를 보여준다.
+
+        try:
+            users_page = paginator.page(currentPage)
+        except EmptyPage:
+            return Response({'detail': 'Invalid page.'}, status=400)
+
+        response_data = {
+            'users': list(users_page),
+            'admin': user.name,
+            'total': users.count(),
+        }
+
+        return Response(response_data, status=200)
+
 # Create your views here.

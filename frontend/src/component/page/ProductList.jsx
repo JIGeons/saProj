@@ -25,7 +25,7 @@ const SortContainer = styled.ul`
 const SortItem = styled.li`
   margin-right: 20px;
   cursor: pointer;
-  font-weight: ${({  active }) => (active ? "bold" : "normal")};
+  font-weight: ${({ active }) => (active ? "bold" : "normal")};
   color: #333;
   transition: color 0.3s;
 
@@ -107,6 +107,35 @@ const CloseButton = styled.span`
   font-size: 24px;
   cursor: pointer;
 `;
+
+// 버튼과 SortContainer를 위한 스타일 정의
+const ActionContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+`;
+
+// 엑셀 버튼 스타일 정의
+const ExcelButton = styled.button`
+  margin-right: 10px;
+  padding: 10px 15px;
+  background-color: #28a745; /* Green background color */
+  color: #fff; /* White text color */
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-lefg: 10px;
+  margin-bottom: 10px;
+
+  &:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+`;
+
+
 const styles = {
   additionalInfo: {
     position: 'absolute',
@@ -129,6 +158,53 @@ const styles = {
   },
 }
 
+const ReviewModal = styled.div`
+  display: ${({ showReviewModal }) => (showReviewModal ? "block" : "none")};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+`;
+
+const ReviewModalContent = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 50%;
+  text-align: center;
+`;
+
+const ReviewModalTitle = styled.h2`
+  margin-bottom: 20px;
+`;
+
+const ReviewModalInput = styled.input`
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+`;
+
+const ReviewModalButton = styled.button`
+  padding: 10px 15px;
+  background-color: #28a745; /* 초록색 배경 */
+  color: #fff; /* 흰색 텍스트 색상 */
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+
+  &:hover {
+    background-color: #218838; /* 마우스 호버 시 더 진한 초록색 */
+  }
+`;
+
 const handleMouseEnter = (productId) => {
   document.getElementById(`additionalInfo${productId}`).style.display = 'block';
 };
@@ -142,6 +218,9 @@ const ProductList = () => {
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewStartDate, setReviewStartDate] = useState("");
+  const [reviewEndDate, setReviewEndDate] = useState("");
 
   useEffect(() => {
     axios.get('http://localhost:8000/posts/product_list/')
@@ -187,6 +266,14 @@ const ProductList = () => {
     setSelectedImage(null);
   };
 
+  const handleReviewDownload = () => {
+    // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
+    console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
+    // 모달과 날짜 범위 초기화
+    setShowReviewModal(false);
+    setReviewStartDate("");
+    setReviewEndDate("");
+  };
   return (
     <Container>
       
@@ -194,12 +281,17 @@ const ProductList = () => {
         <LoadingContainer>데이터를 불러오는 중...</LoadingContainer>
       ) : (
         <React.Fragment>
-          <SortContainer>
-            <SortItem onClick={() => handleSort('lowToHigh')} active={sortBy === 'price'}>가격 낮은 순</SortItem>
-            <SortItem onClick={() => handleSort('highToLow')} active={sortBy === 'price'}>가격 높은 순</SortItem>
-            <SortItem onClick={() => handleSort('name')} active={sortBy === 'name'}>이름 순</SortItem>
-            <SortItem onClick={() => handleSort('reviews')} active={sortBy === 'reviewcount'}>리뷰 많은 순</SortItem>
-          </SortContainer>
+          <ActionContainer>
+            <ExcelButton onClick={() => setShowReviewModal(true)}>
+              엑셀 저장
+            </ExcelButton>
+            <SortContainer>
+              <SortItem onClick={() => handleSort('lowToHigh')} active={sortBy === 'price'}>가격 낮은 순</SortItem>
+              <SortItem onClick={() => handleSort('highToLow')} active={sortBy === 'price'}>가격 높은 순</SortItem>
+              <SortItem onClick={() => handleSort('name')} active={sortBy === 'name'}>이름 순</SortItem>
+              <SortItem onClick={() => handleSort('reviews')} active={sortBy === 'reviewcount'}>리뷰 많은 순</SortItem>
+            </SortContainer>
+          </ActionContainer>
           <ProductContainer>
             {products.map(product => (
                 <Product key={product.id}>
@@ -231,6 +323,29 @@ const ProductList = () => {
               {selectedImage && <img src={selectedImage} alt="Selected Product" />}
             </ModalContent>
           </Modal>
+          <ReviewModal showReviewModal={showReviewModal}>
+            <ReviewModalContent>
+              <ReviewModalTitle>리뷰 다운로드</ReviewModalTitle>
+              <ReviewModalInput
+                type="date"
+                value={reviewStartDate}
+                onChange={(e) => setReviewStartDate(e.target.value)}
+                placeholder="시작 날짜"
+              />
+              <ReviewModalInput
+                type="date"
+                value={reviewEndDate}
+                onChange={(e) => setReviewEndDate(e.target.value)}
+                placeholder="종료 날짜"
+              />
+              <ReviewModalButton onClick={handleReviewDownload}>
+                다운로드
+              </ReviewModalButton>
+              <ReviewModalButton onClick={() => setShowReviewModal(false)}>
+                취소
+              </ReviewModalButton>
+            </ReviewModalContent>
+          </ReviewModal>
         </React.Fragment>
       )}
     </Container>

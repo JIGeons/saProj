@@ -39,7 +39,7 @@ def scrapping():
 
     # 특정 prd_id의 최신 review_num를 조회
     def recent_review(prd_id):
-        review_num = Review.objects.filter(prd_id=prd_id).aggregate(max_review_num=Max('review_num'))
+        review_num = Review.objects.filter(prd=find_product(prd_id)).aggregate(max_review_num=Max('review_num'))
         recent_review_num = review_num['max_review_num']
         return recent_review_num
 
@@ -63,9 +63,9 @@ def scrapping():
 
     # 리뷰데이터를 models를 사용하여 데이터베이스에 저장
     def insert_reviews(prd_id, review_num, user_name, title, date, count, content):
-        product_id = find_product(prd_id)
+        product = find_product(prd_id)
         review = Review(
-            prd=product_id,
+            prd=product,
             review_num=review_num,
             user_name=user_name,
             title=title,
@@ -221,10 +221,13 @@ def scrapping():
 
                 try:
                     # 크롤링한 데이터를 데이터베이스에 저장
+                    ####################
                     insert_reviews(prd_id, review_num, user_name, title, date, count, content)
+                    ####################
                 except Exception as e:
                     # 상품을 데이터 베이스에 저장을 하다가 오류가 생겼을 때 해당 상품의 이름, 리뷰 번호, 내용을 출력 (오류가 난 리뷰의 위치를 찾기 위함)
                     print(f"상품 = {prd_name},  리뷰 번호 = {review_num}, 내용 = {content}")
+                    print(f"사용자명 = {user_name}")
                     # 오류 내용을 출력하여 어떤 오류가 났는지 확인함
                     print("오류 : ", e)
                     break

@@ -1,7 +1,5 @@
 from django.shortcuts import render
-
 from .models import Product, Review
-
 
 def product_page(request):
     product_data = Product.objects.all()

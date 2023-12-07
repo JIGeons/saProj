@@ -4,7 +4,7 @@ from django.db import models
 # 유저를 생성할 때 사용하는 헬퍼(Helper) 클래스, 실제 모델은 AbstractBaseUser을 상속받아 생성하는 클래스
 class UserManager(BaseUserManager):
     def create_user(self, userid, name, email, password=None):
-        if not id:
+        if not userid:
             raise ValueError('must have user ID')
 
         user = self.model(
@@ -24,6 +24,7 @@ class UserManager(BaseUserManager):
             email=email,
             password=password,
         )
+        user.status = 1
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -40,6 +41,7 @@ class User(AbstractBaseUser):
     # is_active, is_admin 장고의 유저 모델의 필수 코드
     is_active = models.BooleanField(default=True)
     is_admin = models.IntegerField(default=False)
+    verification_code = models.CharField(max_length=6, blank=True, null=True)
 
     # 헬퍼 클래스 사용
     objects = UserManager()
@@ -47,6 +49,11 @@ class User(AbstractBaseUser):
     # username필드를 'userid'로 사용 설정
     USERNAME_FIELD = 'userid'
     REQUIRED_FIELDS = ['name', 'email']
+
+    @property
+    def id(self):
+        return self.userid
+
     def __str__(self):
         return self.userid
 

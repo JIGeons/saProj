@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,13 +10,12 @@ from .serializer import UserSerializer
 from .models import User
 
 class LoginView(APIView):
-    @login_required
     def post(self, request):
         print("전송")
         userid = request.data.get('userId')
         password = request.data.get('password')
 
-        user = authenticate(username=userid, password=password)
+        user = authenticate(request, username=userid, password=password)
 
         print(f"userid: {userid} password: {password}")
 
@@ -28,7 +27,8 @@ class LoginView(APIView):
                 'refresh': str(refresh),
             }, status=status.HTTP_200_OK)
         else:
-            return Response({'message': "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'message': "Invalid credentials"}
+                            , status=status.HTTP_401_UNAUTHORIZED)
 
 class SignUpView(APIView):
     def post(self, request):

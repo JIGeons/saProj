@@ -98,6 +98,12 @@ AUTHENTICATION_CLASSES = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
@@ -109,24 +115,32 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 CORS_ALLOW_HEADERS = [
+    'access-control-allow-credentials',
+    'access-control-allow-origin',
+    'access-control-request-method',
+    'access-control-request-headers',
     'accept',
     'accept-encoding',
+    'accept-language',
     'authorization',
+    'connection',
     'content-type',
     'dnt',
+    'credentials',
+    'host',
     'origin',
     'user-agent',
     'X-CSRFToken',
     'csrftoken',
-    'x-csrf-token',
     'x-requested-with',
-    'csrfmiddlewaretoken',
 ]
 ROOT_URLCONF = 'saProj.urls'
 
 # react와 django에 csrf 기본 설정값이 다르기 때문에 같게 만들어 줌
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 CSRF_HEADER_NAME = 'X-XSRF-TOKEN'
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SECURE = True
 
 TEMPLATES_DIR = BASE_DIR / "templates"
 TEMPLATES = [

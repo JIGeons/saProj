@@ -4,9 +4,6 @@ import LoginButton from "../ui/LoginButton";
 import styled from "styled-components";
 import axios from "axios";
 
-axios.defaults.xsrfCookieName = 'csrftoken'
-axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-
 const Wrapper = styled.div`
     padding: 16px;
     width: calc(100% - 32px);
@@ -35,7 +32,7 @@ const Container = styled.div`
 
 const Container2 = styled.form`
     display: flex;
-    flex-directions: row;
+    flex-direction: row;
     align-items: center;
 
     & > * {
@@ -53,9 +50,13 @@ const Container3 = styled.div`
     flex-directions: column;
 `;
 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+
 function Login(props){
     const [userId, setUserId] = useState('');
     const [password, setPassword] = useState('');
+    const [accessToken, setAccessToken] = useState(null);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -67,11 +68,11 @@ function Login(props){
             },{
                 headers: {
                     'Content-Type': 'application/json',
-                    'csrfmiddlewaretoken': 'window.csrf_token',
+                    'X-CSRFToken': window.csrf_token,
                 }
             });
 
-            const accessToken = response.data.access;
+           setAccessToken(response.data.access);
         } catch (error) {
             alert("로그인에 실패하였습니다.");
             console.error(error);
@@ -84,12 +85,20 @@ function Login(props){
     };
 
     useEffect(() => {
-        axios('http://localhost:8000/users/login/')
-            .then((res) => {
-                
+        // 로그인 후에만 사용자 프로필에 접근
+        if (accessToken){
+            axios('http://localhost:8000/users/profile/', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                }
             })
-            .catch((error)=> console.log("Network Error : ", error));
-    }, []);
+            .then((res) => {
+                console.log("User Profile:", res.data);
+            })
+            .catch((error) => console.log("Network Error: ", error));
+        }
+    }, [accessToken]);
 
     const navigate = useNavigate();
 
@@ -123,8 +132,7 @@ function Login(props){
                     />
                 </Container2>
                 <Container2>
-                    <div style={{marginRight: 10}}> <Link to='/signup'>회원가입</Link></div>
-                    <div> <Link to='/signup'>비밀번호 찾기</Link></div>
+                    <div style={{marginRight: 10}}> <Link to='signup/'>회원가입</Link></div>
                 </Container2>
             </Container>
         </Wrapper>

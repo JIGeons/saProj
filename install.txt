@@ -3,12 +3,13 @@ pip install celery[redis]
 pip install django-celery-beat
 pip install django-celery-results
 pip install eventlet
+pip install mysqlclient
 pip install selenium
 pip install bs4
 pip install openai=0.28
-pip install django-cors-header
-pip install django-restframework
-pip install django-restfromework-simplejwt
+pip install django-cors-headers
+pip install djangorestframework
+pip install djangorestfromework-simplejwt
 
 frontend install 목록
 npm install react-router-dom

@@ -75,6 +75,47 @@ def scrapping():
         )
         review.save()
 
+    # 크롤링한 page_source를 파싱하고 board_info를 return하는 함수
+    def page_Parsing(page_source):
+        # page_source을 BeautifulSoup 객체로 파싱
+        soup = BeautifulSoup(page_source, 'html.parser')
+        # 파싱된 데이터에서 상품 리뷰 list를 가져옴
+        board_info = soup.find('ul', {'class': 'board-list'}).find_all('li')
+        return board_info
+
+    def product_parsing(page_source):
+        # page_source을 BeautifulSoup 객체로 파싱
+        soup = BeautifulSoup(page_source, 'html.parser')
+
+        # id가 'items'인 div를 찾는다
+        prd_info = soup.find('div', {'id': 'items'})
+
+        # JSON 데이터를 파싱
+        items_data = json.loads(prd_info.text)
+
+        # 파싱한 데이터에서 product의 id, name을 추출
+        prd = items_data['items'][0]
+        prd_id = int(prd['item_id'])
+        prd_name = prd['item_name']
+        prd_price = prd['price']
+
+        # 나중 프론트를 구성할 때 사용하기 위함
+        prd_img_src = soup.find('div', {'class': 'goods-large'}).find('img')['src']
+
+        # product테이블에서 prd_id를 검색하고 반환값이 없으면 해당 상품이 등록이 안되어 있는 것이므로 product 데이터베이스에 insert
+        if not find_product(prd_id):
+            insert_product(prd_id, prd_name, prd_price, prd_img_src)
+
+        # 해당 id로 최신 review_num 가지고 옴
+        recent_review_num = recent_review(prd_id)
+        data = {
+            "prd_id": prd_id,
+            "prd_name": prd_name,
+            "recent_review_num": recent_review_num
+        }
+
+        return data
+
     # --------------------------------------------------------------------
 
     # ------------------------ 프로그램 메인 -------------------------------------------
@@ -88,8 +129,6 @@ def scrapping():
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
 
         try:
-            # 나중 프론트를 구성할 때 사용하기 위함
-            prd_img_src = prd_list[i].find_element(By.TAG_NAME, 'img').get_attribute('src')
             # 이어서 다른 상품 검색
             prd_list[i].click()
         except:
@@ -104,6 +143,9 @@ def scrapping():
         review_btn = driver.find_element(By.CLASS_NAME, 'goodsInfo-btn-review')
         review_btn.click()
 
+        # 이전 리뷰번호 0으로 초기화
+        pre_review_num = 0
+
         # 최신 리뷰를 다 업데이트하고 이중 반복문을 탈출하기 위한 변수
         escape = False
         # 상품을 처음 불러 왔을 때 최신리뷰와 상품의 정보를 불러오기 위한 변수
@@ -112,36 +154,19 @@ def scrapping():
             count_num += 1
             # 여러가지 방법을 써봤지만 sleep을 이용하지 않으면 parsing이 제대로 되지 않아서 parsing에 문제가 안생기는 최소 sleep을 걸어 두었습니다.
 
-            time.sleep(1)
+            time.sleep(0.3)
 
             page_source = driver.page_source
 
             # page_source을 BeautifulSoup 객체로 파싱
-            soup = BeautifulSoup(page_source, 'html.parser')
+            board_info = page_Parsing(page_source)
 
             # 상품 페이지에 들어가서 상품을 처음 스크래핑할 때만 해당 정보를 가져온다.
             if count_num == 1:
-                # id가 'items'인 div를 찾는다
-                prd_info = soup.find('div', {'id': 'items'})
-
-                # JSON 데이터를 파싱
-                items_data = json.loads(prd_info.text)
-
-                # 파싱한 데이터에서 product의 id, name을 추출
-                prd = items_data['items'][0]
-                prd_id = int(prd['item_id'])
-                prd_name = prd['item_name']
-                prd_price = prd['price']
-
-                # product테이블에서 prd_id를 검색하고 반환값이 없으면 해당 상품이 등록이 안되어 있는 것이므로 product 데이터베이스에 insert
-                if not find_product(prd_id):
-                    insert_product(prd_id, prd_name, prd_price, prd_img_src)
-
-                # 해당 id로 최신 review_num 가지고 옴
-                recent_review_num = recent_review(prd_id)
-
-            # 파싱된 데이터에서 상품 리뷰 list를 가져옴
-            board_info = soup.find('ul', {'class': 'board-list'}).find_all('li')
+                data = product_parsing(page_source)
+                prd_id = data.get("prd_id")
+                prd_name = data.get("prd_name")
+                recent_review_num = data.get("recent_review_num")
 
             # 리스트의 길이 확인
             board_len = len(board_info)
@@ -153,6 +178,16 @@ def scrapping():
 
             # 현재 가장 리뷰페이지 가장 처음에 있는 리뷰의 번호를 가지고옴
             current_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
+
+            # 이전 페이지 소스의 리뷰번호와 현재 페이지 소스의 리뷰 번호가 같으면 로드가 아직 안 된 것 이므로
+            # 페이지가 로드 될 때 까지 반복해서 로드 한다.
+            while pre_review_num == current_review_num:
+                # 페이지 소스를 다시 가지고 와서
+                page_source = driver.page_source
+                # 페이지 파싱을 다시 한다
+                board_info = page_Parsing(page_source)
+                # 현재 페이지의 리뷰 번호를 가지고 온다
+                current_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
 
             # 데이터베이스 가장 최근 리뷰번호와 페이지 리뷰의 번호가 같으면 최신 리뷰가 없는 것이므로 break(다음 product로 넘어감)
             if recent_review_num == current_review_num:
@@ -194,6 +229,9 @@ def scrapping():
                     print("오류 : ", e)
                     break
 
+            # 현재 리뷰의 첫 번째 리뷰의 번호를 이전 리뷰번호로 저장
+            pre_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
+
             # excape가 true면 모든 최신 리뷰가 업데이트 된 것이므로 break
             if escape: break
 
@@ -216,5 +254,4 @@ def scrapping():
         except:
             print("실패")
 
-    # conn.close()
     # -----------------------------------------------------------------------------------------------

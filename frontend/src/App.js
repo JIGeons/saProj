@@ -5,7 +5,9 @@ import Footer from './component/page/Footer';
 import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
 import AdminPage from './component/page/AdminPage';
+import Header from "./component/page/Header";
 function App() {
+
   return (
     <BrowserRouter>
       <div className="wrapper">
@@ -13,9 +15,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/signup/" element={<Signup />} />
-            <Route path="posts/productlist/" element={<Product />} />
-            <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
-            <Route path="/adminPage/user/:id" element={<AdminPage />} />
+            <Route element={<Header />}>
+              <Route path="posts/productlist/" element={<Product />} />
+              <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
+              <Route path="/adminPage/user/:id" element={<AdminPage />} />
+            </Route>
           </Routes>
         </div>
         <Footer />

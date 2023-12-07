@@ -103,31 +103,18 @@ const ReviewContainer = styled.div`
     th {
       background-color: #f2f2f2;
     }
-
-    .review-num {
-      width: 4%;
-    }
-
     .title {
       width: 17%;
     }
-
     .content {
       width: 30%;
     }
-
     .name {
       width: 5%;
     }
-
-    .count {
-      width: 5%;
-    }
-
     .good-bad {
       width: 5%;
     }
-
     .date {
       width: 13%;
     }
@@ -273,23 +260,19 @@ const ProductDetail = () => {
         <table>
           <thead>
             <tr>
-              <th className='review-num'>리뷰 번호</th>
               <th className='title'>제목</th>
               <th className='content'>내용</th>
               <th className='name'>이름</th>
-              <th className="count">조회수</th>
               <th className="good-bad">긍·부정</th>
               <th className="date">날짜</th>
             </tr>
           </thead>
           <tbody>
             {reviews.map((review) => (
-              <tr key={`${state}-${review.id}`}>
-                <td>{review.review_num}</td>
+              <tr key={`${state}-${review.review_num}`}>
                 <td>{review.title}</td>
                 <td style={{ width: "50%" }}>{review.content}</td>
                 <td>{review.user_name}</td>
-                <td>{review.count}</td>
                 <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
                   {review.good_or_bad == 1 ? '긍정' : '부정'}
                 </td>

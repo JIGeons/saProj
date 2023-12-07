@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -204,12 +204,21 @@ const ColumnFlexContainer = styled.div`
 `;
 
 const CheckboxContainer = styled.div`
-  height: 100%;
+  width: 20%;
+  height: 200%;
   display: flex;
   flex-direction: column;
   margin-left: 10px;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  padding-bottom: 10px;
+`;
+
+const PeriodDiv = styled.div`
+  margin-left: 10px;
+  text-align: left;
+  margin-top: 10px;
 `;
 
 const ReviewProduct = styled.div`
@@ -296,6 +305,8 @@ const handleMouseLeave = (productId) => {
 };
 
 const ProductList = () => {
+  const params = useParams();
+  const user = params.id;
   const [products, setProducts] = useState([]);
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -309,6 +320,10 @@ const ProductList = () => {
   const [downloadSelected, setDownloadSelected] = useState("");
 
   const [excelDownload, setExcelDownload] = useState([]);
+
+  const [week, setWeek] = useState(false);
+  const [month, setMonth] = useState(false);
+  const [year, setYear] = useState(false);
 
   useEffect(() => {
     axios.get('http://localhost:8000/posts/product_list/')
@@ -387,6 +402,49 @@ const ProductList = () => {
     setExcelDownload([]);
   };
 
+  const handleCheckboxChange = (e, date) => {
+    const isChecked = e.target.checked;
+    let startDate;
+
+    if (date === 'week') {
+      setWeek(!week)
+        // week를 제외한 나머지 체크박스 false
+        setMonth(false)
+        setYear(false)
+    } else if(date === 'month') {
+      // month를 제외한 나머지 체크박스 false
+      setWeek(false)
+      setMonth(!month)
+      setYear(false)
+    } else if(date === 'year') {
+        // year를 제외한 나머지 체크박스 false
+        setWeek(false)
+        setMonth(false)
+        setYear(!year)
+    }
+
+    if (isChecked) {
+      if (date === 'week'){
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 6);
+      } else if (date === 'month'){
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 1);
+        startDate.setDate(startDate.getDate() + 1);
+      } else if (date === 'year'){
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      setReviewStartDate(startDate.toISOString().split('T')[0]);
+      setReviewEndDate(new Date().toISOString().split('T')[0]);
+    } else {
+      setReviewStartDate('');
+      setReviewEndDate('');
+    }
+  };
+
   return (
     <Container>
       
@@ -408,7 +466,7 @@ const ProductList = () => {
           <ProductContainer>
             {products.map(product => (
                 <Product key={product.id}>
-                    <Link to={`productdetail/${product.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                    <Link to={`/posts/productlist/productdetail/${product.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                         <ProductImage src={product.src} alt={product.name} />
                         
                         <div id={`additionalInfo${product.id}`} style={styles.additionalInfo}>
@@ -461,24 +519,30 @@ const ProductList = () => {
                   </ReviewModalInputContainer>
                   </ColumnFlexContainer>
                   <CheckboxContainer>
-                    <div>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={week}
+                        onChange={(e) => handleCheckboxChange(e, 'week')}
                       />
-                      <label>일주일</label>
-                    </div>
-                    <div>
+                      <label style={{marginLeft: '5px'}}>일주일</label>
+                    </PeriodDiv>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={month}
+                        onChange={(e) => handleCheckboxChange(e, 'month')}
                       />
-                      <label>한달</label>
-                    </div>
-                    <div>
+                      <label style={{marginLeft: '5px'}}>한달</label>
+                    </PeriodDiv>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={year}
+                        onChange={(e) => handleCheckboxChange(e, 'year')}
                       />
-                      <label>일년</label>
-                    </div>
+                      <label style={{marginLeft: '5px'}}>일년</label>
+                    </PeriodDiv>
                   </CheckboxContainer>
               </FlexContainer>
               <p style={{ color: 'blue' }}>※ 시작 날짜를 선택 안하면 전체 기간의 리뷰가 다운로드됩니다.</p>

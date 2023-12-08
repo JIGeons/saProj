@@ -86,7 +86,7 @@ class PrdDetailView(APIView):
         product_data = Product.objects.get(id=prd_id)
         product_serializer = ProductSerializer(product_data, many=False)
 
-        product_review_data = Review.objects.filter(prd_id=prd_id).values().order_by('review_num')
+        product_review_data = Review.objects.filter(prd_id=prd_id).values().order_by('id')
 
         current_page = 1
 
@@ -117,11 +117,11 @@ class DetailPaging(APIView):
         print(state)
 
         if state == 'all':
-            review_data = Product.objects.get(id=prd_id).count
+            review_data = Review.objects.filter(prd_id=prd_id)
         elif state == 'good':
-            review_data = Product.objects.get(id=prd_id).good
+            review_data = Review.objects.filter(prd_id=prd_id, good_or_bad=1)
         elif state == 'bad':
-            review_data = Product.objects.get(id=prd_id).bad
+            review_data = Review.objects.filter(prd_id=prd_id, good_or_bad=2)
         else:
             return Response({'detail': 'Invalid state.'}, status=400)
 
@@ -134,7 +134,7 @@ class DetailPaging(APIView):
 
         return Response({
             "reviews": list(review_page),
-            "total": review_data
+            "total": review_data.count()
         }, status=200)
 
 class ExcelDownload(APIView):

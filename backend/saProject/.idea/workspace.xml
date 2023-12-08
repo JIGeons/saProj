@@ -5,28 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="29a45207-3c8a-43f6-a646-e7aa5b0cff8f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/saProj/saApp/services/prdReviewCnt.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/saProj/saving_log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/posts/serializer.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/serializer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/posts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saApp/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saProj/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/Header.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/Header.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/signup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/signup.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../install.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../install.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/페이지.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +55,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Project/backend/saProject&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -99,6 +90,11 @@
       <workItem from="1701908425058" duration="26366000" />
       <workItem from="1701947712704" duration="5799000" />
       <workItem from="1701994102752" duration="35999000" />
+      <workItem from="1702046153390" duration="973000" />
+      <workItem from="1702052260530" duration="1420000" />
+      <workItem from="1702053713875" duration="23000" />
+      <workItem from="1702053745791" duration="2323000" />
+      <workItem from="1702056442437" duration="145000" />
     </task>
     <servers />
   </component>

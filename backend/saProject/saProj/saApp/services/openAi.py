@@ -72,9 +72,10 @@ def review_evaluation():
                     json_gb = json.loads(gb)
 
                 # 답변이 NULL 값일 때 해당 질문 만 다시 질문
-                except json.decoder.JSONDecodeError as e:
+                except json.JSONDecodeError as e:
                     print("gb : ", gb)
                     while True:
+                        print(review_update.content)
                         json_gb = json.loads(classification(review_update.content))
                         if json_gb["answer"] == 'Y' or json_gb["answer"] == 'N':
                             break

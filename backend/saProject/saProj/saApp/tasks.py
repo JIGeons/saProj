@@ -11,7 +11,7 @@ from .services.scrapping_service import scrapping
 
 @shared_task
 def scrapping_review():
-    #scrapping()
+    scrapping()
     print("scrapping~~!!")
     review_evaluation()
 

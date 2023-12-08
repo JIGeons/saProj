@@ -304,6 +304,8 @@ const handleMouseLeave = (productId) => {
   document.getElementById(`additionalInfo${productId}`).style.display = 'none';
 };
 
+const url = 'http://localhost:8000/posts'
+
 const ProductList = () => {
   const params = useParams();
   const user = params.id;
@@ -372,6 +374,11 @@ const ProductList = () => {
   const handleDownloadAllChange = () => {
     setDownloadAll(!downloadAll);
     setDownloadSelected(false);
+    if(!downloadAll === true) {
+      products.map(product => (
+        setExcelDownload([...excelDownload, product.id])
+      ))
+    }
   };
 
   const handleDownloadSelectedChange = () => {
@@ -393,6 +400,15 @@ const ProductList = () => {
   };
 
   const handleReviewDownload = () => {
+    console.log(reviewStartDate)
+    console.log(reviewEndDate)
+    console.log(excelDownload)
+    axios.post(`${url}/exceldownload/`, {
+      start: reviewStartDate,
+      end: reviewEndDate,
+      download: excelDownload
+    })
+
     // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
     console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
     // 모달과 날짜 범위 초기화
@@ -580,7 +596,7 @@ const ProductList = () => {
                   </ReviewProductContainer>
                 )}
               </DownloadOptionsContainer>
-              <ReviewModalButton onClick={handleReviewDownload}>
+              <ReviewModalButton onClick={() => {handleReviewDownload()}}>
                 다운로드
               </ReviewModalButton>
               <ReviewModalButton onClick={() => {setShowReviewModal(false); setExcelDownload([]);}}>

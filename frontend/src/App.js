@@ -4,7 +4,7 @@ import Signup from './component/page/Signup';
 import Footer from './component/page/Footer';
 import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
-import AdminPage from './component/page/AdminPage';
+import AdminPage from './component/page/AdminPage'
 import Header from "./component/page/Header";
 function App() {
 

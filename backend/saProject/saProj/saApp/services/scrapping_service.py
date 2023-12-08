@@ -9,6 +9,9 @@ import time
 import json
 import re
 
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from ..models import Product, Review
 
 
@@ -126,20 +129,27 @@ def scrapping():
 
     # list의 갯수 만큼 for문 반복
     for i in range(0, prd_length):
-
         # for prd in prd_list를 해봤지만 동적으로 크롤링 할 시 항상 같은 코드가 같은건 아닌거 같다! 그러므로 페이지가 돌아올때마다 list를 다시 찾고
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
 
+        time.sleep(0.5)
+
+        prev_page_source = driver.page_source
+
         try:
-            # 이어서 다른 상품 검색
+            # 이어서 다음 상품 클릭
             prd_list[i].click()
         except:
             # 화면에 클릭 요소가 나타나지 않아서 오류가 생기면 pagedown으로 요소가 보이게끔 한 후 click을 한다.
             action = ActionChains(driver)
             action.send_keys(Keys.PAGE_DOWN).perform()
             prd_list[i].click()
-
         # ----------- 상품의 리뷰 크롤링 코드----------------------
+
+        # 리뷰 버튼을 못찾는 상황이 발생 -> webdriverWait으로 리뷰 버튼을 찾을 때 까지 대기
+        WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'goodsInfo-btn-review'))
+        )
 
         # 리뷰 버튼 클릭
         review_btn = driver.find_element(By.CLASS_NAME, 'goodsInfo-btn-review')

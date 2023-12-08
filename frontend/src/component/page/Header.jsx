@@ -39,8 +39,11 @@ const Header = () => {
     // 경로에 따라 다른 로고를 설정
     const getLogoText = () => {
         console.log(location.pathname)
-        if (location.pathname === "/posts/productlist") {
-        return "상품목록";
+        if (location.pathname === "/posts/productlist/") {
+          return "상품목록";
+        }
+        if (location.pathname === "/posts/productlist/productdetail/:id") {
+          return "id";
         }
         // 다른 경우에 대한 로고 텍스트 추가
         return "Your Logo";

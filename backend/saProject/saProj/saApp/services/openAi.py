@@ -30,7 +30,7 @@ def classification(reviews):  # 리뷰들의 10개 묶음
     return good_or_bad['choices'][0]['message']['content']
 
 def review_evaluation():
-    reviews = Review.objects.filter(good_or_bad__isnull=True)
+    reviews = Review.objects.filter(good_or_bad__isnull=True).order_by('review_num')
 
     #print(f"리뷰 : {reviews}")
 
@@ -49,7 +49,8 @@ def review_evaluation():
         contents += review_content
         num_list.append(review_num)
 
-        if ((cnt % 50) == 0) or (len(reviews) == cnt):
+        if ((cnt % 100) == 0) or (len(reviews) == cnt):
+            print(num_list)
             start = time.time()
             for i in range(3):
                 try:
@@ -69,13 +70,17 @@ def review_evaluation():
             for gb, review_num in zip(gb_list, num_list):
                 review_update = Review.objects.get(review_num=review_num)
                 try:
+                    if gb == '{':
+                        print("답변이 잘못되어 질문을 다시 합니다.")
+                        gb = json.loads(classification(review_update.content))
+
                     json_gb = json.loads(gb)
 
                 # 답변이 NULL 값일 때 해당 질문 만 다시 질문
                 except json.JSONDecodeError as e:
                     print("gb : ", gb)
                     while True:
-                        print(review_update.content)
+                        print("답변 오류로 질문을 다시 합니다.")
                         json_gb = json.loads(classification(review_update.content))
                         if json_gb["answer"] == 'Y' or json_gb["answer"] == 'N':
                             break
@@ -98,7 +103,16 @@ def review_evaluation():
                     else:
                         review_update.good_or_bad = 0
                         countBad += 1
+
                     review_update.save()
+
+                    update_review = Review.objects.get(review_num=review_update.review_num)
+
+                    if update_review.good_or_bad is None:
+                        print(update_review)
+
+                if review_update.good_or_bad is None:
+                    print(gb, review_update.good_or_bad)
 
             # print(count,"개 리뷰 분류 소요시간 :", time.time() - start, sep='')
             # print("긍정 :", countGood, "개  | 부정 :", countBad, "개 분류했습니다.", sep='')

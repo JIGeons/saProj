@@ -304,8 +304,6 @@ const handleMouseLeave = (productId) => {
   document.getElementById(`additionalInfo${productId}`).style.display = 'none';
 };
 
-const url = 'http://localhost:8000/posts'
-
 const ProductList = () => {
   const params = useParams();
   const user = params.id;
@@ -327,8 +325,10 @@ const ProductList = () => {
   const [month, setMonth] = useState(false);
   const [year, setYear] = useState(false);
 
+  const url = 'http://localhost:8000/posts'
+
   useEffect(() => {
-    axios.get('http://localhost:8000/posts/product_list/')
+    axios.get(`${url}/product_list/`)
       .then(response => {
         setProducts(response.data);
         setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
@@ -374,11 +374,13 @@ const ProductList = () => {
   const handleDownloadAllChange = () => {
     setDownloadAll(!downloadAll);
     setDownloadSelected(false);
+
     if(!downloadAll === true) {
       products.map(product => (
-        setExcelDownload([...excelDownload, product.id])
+        setExcelDownload(items => [...items, product.id])
       ))
     }
+    
   };
 
   const handleDownloadSelectedChange = () => {
@@ -416,6 +418,11 @@ const ProductList = () => {
     setReviewStartDate("");
     setReviewEndDate("");
     setExcelDownload([]);
+    setDownloadAll(false);
+    setDownloadSelected(false);
+    setWeek(false);
+    setMonth(false);
+    setYear(false);
   };
 
   const handleCheckboxChange = (e, date) => {
@@ -567,7 +574,7 @@ const ProductList = () => {
                   type="checkbox"
                   id="downloadAll"
                   checked={downloadAll}
-                  onChange={handleDownloadAllChange}
+                  onChange={() => handleDownloadAllChange()}
                 />
                 <label htmlFor="downloadAll">전체 상품 다운로드</label>
               </DownloadOptionsContainer>

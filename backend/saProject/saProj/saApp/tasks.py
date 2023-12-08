@@ -12,6 +12,6 @@ from .services.scrapping_service import scrapping
 @shared_task
 def scrapping_review():
     scrapping()
-    print("scrapping~~!!")
+    print("scrapping is done gpt question start~!!")
     review_evaluation()
 

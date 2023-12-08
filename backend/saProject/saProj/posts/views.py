@@ -1,43 +1,61 @@
 import openpyxl
+import pandas as pd
+
 from django.core.paginator import Paginator, EmptyPage
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from django.db.models import Q
+from django.http import HttpResponse
+
 from saApp.models import Product, Review
 from .serializer import ProductSerializer, ReviewSerializer
 
 def excel_download(reviews, start, end):
-    wb = openpyxl.Workbook()
+    print(f"reviews = {reviews}, start = {start}, end = {end}")
 
-    # 각 상품에 대한 시트 생성
-    for review in reviews:
-        # 시트 이름을 상품이름으로 설정
-        sheet_name = Product.objects.get(id=review)
-        ws = wb.create_sheet(title=sheet_name.name)
+    review_data = Review.objects.filter(prd_id__in=reviews)
 
-        # 헤더 추가
-        headers = [field.name for field in Review._meta.fields]
-        ws.append(headers)
+    print(review_data)
 
-        review_data = Review.objects.filter(prd_id=review)
-
-        if start != 'all':
-            # 리뷰 데이터 가져오기
+    # 리뷰 데이터 가져오기
+    if start == '':
+        if end == '':
+            review_data = review_data.values()
+        else :
+            review_data = review_data.filter(Q(date__lte=end)).values().all()
+    else:
+        if end == '':
+            review_data = review_data.filter(Q(date__gte=start)).values().all()
+        else:
             review_data = review_data.filter(date__range=[start, end]).values().all()
 
+    if review_data.count() == 0:
+        return 'empty data'
+    # 리뷰 데이터를 DataFrame으로 변환
+    df = pd.DataFrame.from_records(review_data)
 
-        # 데이터 추가
-        for row in review_data:
-            ws.append([getattr(row, header) for header in headers])
+    df = df.rename(columns={'review_num': '리뷰 번호', 'prd_id': '상품 번호', 'user_name': '유저 이름', 'title': '제목', 'content': '내용', 'date': '작성 날짜', 'good_or_bad': '긍정/부정'})
 
-    # 처음에 자동으로 생성된 기본 시트 삭제
-    del wb['Sheet']
+    print(df)
 
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = 'attachment; filename=드시모네_상품_리뷰.xlsx'
-    wb.save(response)
+    # 엑셀 파일 생성
+    excel = pd.ExcelWriter('드시모네_리뷰_데이터.xlsx', engine='xlsxwriter')
+
+    # 각 상품 별로 다른 워크시트에 데이터 작성
+    for prd_id, group_df in df.groupby('상품 번호'):
+        # utf-8-sig는 Excel에서 한글이 제대로 인식되도록 하는 인코딩
+        group_df.to_excel(excel, sheet_name=f'{Product.objects.get(id=prd_id).name}', index=False)
+
+    excel.save()
+
+    # 'rb'는 파일을 이진 모드로 읽기 위한 옵션
+    with open('드시모네_리뷰_데이터.xlsx', 'rb') as file:
+        response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=드시모네_리뷰_데이터.xlsx'
 
     return response
 
@@ -132,8 +150,8 @@ class DetailPaging(APIView):
 
 class ExcelDownload(APIView):
     def post(self, request):
-        start = request.data.get('startdate')
-        end = request.data.get('enddate')
+        start = request.data.get('start')
+        end = request.data.get('end')
         download = request.data.get('download')
 
         print(start, end, download)

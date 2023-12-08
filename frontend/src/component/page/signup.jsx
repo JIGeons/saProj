@@ -279,8 +279,12 @@ const SignUp = () => {
       return;
     } else {
       try {
+        if (username === ""){
+          alert("이름을 먼저 적어주세요.")
+        }
         const response = await axios.post(`${url}/send_code/`, {
           email: email,
+          name: username,
         });
   
         if (response.data.success) {

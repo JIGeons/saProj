@@ -127,7 +127,7 @@ const Login = () => {
     // 로그인 성공 시 처리
     if (login.data.success) {      
       alert("로그인 성공");
-      navigate(`posts/productlist/`);
+      navigate(`posts/productlist`);
     } 
     // 로그인 실패 시
     else if (login.data.status == 0){

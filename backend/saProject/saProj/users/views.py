@@ -102,6 +102,10 @@ class SignUpView(APIView):
 class SendEmailView(APIView):
     def post(self, request):
         email = request.data.get('email')
+        name = request.data.get('name')
+
+        if name == '':
+            return JsonResponse({'success':False, 'error': '이름이 적혀있지 않습니다'}, status=400)
         try:
             print("이메일 : ", email)
             # 이미 가입된 이메일인지 확인
@@ -109,7 +113,7 @@ class SendEmailView(APIView):
             return JsonResponse({'success':False, 'error': '이미 가입된 이메일입니다.'})
         except User.DoesNotExist:
             # 가입되지 않은 이메일일 경우 인증 코드 생성 및 전송
-            verification_code = sendEmail(function='signUp', email=user.email, name=user.name)
+            verification_code = sendEmail(function='signUp', email=email, name=name)
 
             return JsonResponse({'success': True, 'verification_code': verification_code})
 

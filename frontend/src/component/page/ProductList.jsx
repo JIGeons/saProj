@@ -330,7 +330,7 @@ const ProductList = () => {
   useEffect(() => {
     axios.get(`${url}/product_list/`)
       .then(response => {
-        setProducts(response.data);
+        setProducts(response.data.products);
         setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
       })
       .catch(error => {
@@ -353,7 +353,7 @@ const ProductList = () => {
         sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'reviews':
-        sortedProducts.sort((a, b) => b.review_count  - a.review_count );
+        sortedProducts.sort((a, b) => b.count  - a.count );
         break;
       default:
         break;
@@ -495,9 +495,9 @@ const ProductList = () => {
                         <div id={`additionalInfo${product.id}`} style={styles.additionalInfo}>
                           {/* Display additional information here */}
                           <p>** 리뷰 분석 **</p>
-                          <p>총 리뷰 개수 : {product.review_count}</p>
-                          <p>긍정 리뷰 개수 : {product.review_good}</p>
-                          <p>부정 리뷰 개수 : {product.review_bad}</p>
+                          <p>총 리뷰 개수 : {product.count}</p>
+                          <p>긍정 리뷰 개수 : {product.good}</p>
+                          <p>부정 리뷰 개수 : {product.bad}</p>
                         </div>
                         <div
                           style={styles.productHover}

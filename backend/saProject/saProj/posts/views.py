@@ -1,8 +1,6 @@
-import openpyxl
 import pandas as pd
 
 from django.core.paginator import Paginator, EmptyPage
-from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
@@ -10,6 +8,8 @@ from rest_framework.views import APIView
 
 from django.db.models import Q
 from django.http import HttpResponse
+from django.http import FileResponse
+import io
 
 from saApp.models import Product, Review
 from .serializer import ProductSerializer, ReviewSerializer
@@ -19,7 +19,7 @@ def excel_download(reviews, start, end):
 
     review_data = Review.objects.filter(prd_id__in=reviews)
 
-    print(review_data)
+    print(review_data.count())
 
     # 리뷰 데이터 가져오기
     if start == '':
@@ -35,14 +35,25 @@ def excel_download(reviews, start, end):
 
     if review_data.count() == 0:
         return 'empty data'
+
+    total = review_data.count()
+    good = review_data.filter(good_or_bad=1).count()
+    bad = review_data.filter(good_or_bad=0).count()
+
+    summary_df = pd.DataFrame({'총 리뷰 갯수': [total], '긍정 리뷰 갯수': [good], '부정 리뷰 갯수': [bad]})
     # 리뷰 데이터를 DataFrame으로 변환
     df = pd.DataFrame.from_records(review_data)
+    df = df.drop(columns=['id'])
+
+    # good_or_bad 열 값 변경
+    df['good_or_bad'] = df['good_or_bad'].map({1: '긍정', 0:'부정'})
 
     df = df.rename(columns={'review_num': '리뷰 번호', 'prd_id': '상품 번호', 'user_name': '유저 이름', 'title': '제목', 'content': '내용', 'date': '작성 날짜', 'good_or_bad': '긍정/부정'})
 
     print(df)
 
     # 엑셀 파일 생성
+    excel_data = io.BytesIO()
     excel = pd.ExcelWriter('드시모네_리뷰_데이터.xlsx', engine='xlsxwriter')
 
     # 각 상품 별로 다른 워크시트에 데이터 작성
@@ -50,43 +61,23 @@ def excel_download(reviews, start, end):
         # utf-8-sig는 Excel에서 한글이 제대로 인식되도록 하는 인코딩
         group_df.to_excel(excel, sheet_name=f'{Product.objects.get(id=prd_id).name}', index=False)
 
-    excel.save()
+    excel.close()
+    excel_data.seek(0)
 
     # 'rb'는 파일을 이진 모드로 읽기 위한 옵션
     with open('드시모네_리뷰_데이터.xlsx', 'rb') as file:
         response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=드시모네_리뷰_데이터.xlsx'
+        response.write(excel_data.getvalue())
 
     return response
 
 class productView(APIView):
     def get(self, request, *args, **kwargs):
         products = Product.objects.all()
-        product_data = []
+        product_serializer = ProductSerializer(products, many=True)
 
-        for product in products:
-            # 각 제품에 대한 리뷰 갯수
-            review_count = Review.objects.filter(prd_id=product.id).count()
-            review_good = Review.objects.filter(prd_id=product.id, good_or_bad=1).count()
-            review_bad = Review.objects.filter(prd_id=product.id, good_or_bad=0).count()
-
-            # ProductSerializer를 사용하여 데이터 직렬화
-            product_serializer = ProductSerializer(product)
-            review_data = {
-                'review_count': review_count,
-                'review_good': review_good,
-                'review_bad': review_bad
-            }
-
-            # 시리얼라이즈된 데이터를 product_data 리스트에 추가
-            product_data.append({
-                **product_serializer.data,
-                **review_data
-            })
-            # product_serializer와 review_data는 두 개의 딕셔너리이다.
-            # '**'를 사용하여 이 두 딕셔너리를 하나로 합친다. (딕셔너리 언패킹)
-
-        return Response(product_data, status=status.HTTP_200_OK)
+        return Response({'products': product_serializer.data}, status=status.HTTP_200_OK)
 
 class PrdDetailView(APIView):
     def get(self, request, *arg, **kwargs):
@@ -96,8 +87,6 @@ class PrdDetailView(APIView):
         product_serializer = ProductSerializer(product_data, many=False)
 
         product_review_data = Review.objects.filter(prd_id=prd_id).values().order_by('review_num')
-        good = product_review_data.filter(good_or_bad=1).count()
-        bad = product_review_data.filter(good_or_bad=0).count()
 
         current_page = 1
 
@@ -111,9 +100,9 @@ class PrdDetailView(APIView):
         response_data = {
             'review_page': list(review_page),
             'product': product_serializer.data,
-            'total': product_review_data.count(),
-            'good': good,
-            'bad': bad
+            'total': product_data.count,
+            'good': product_data.good,
+            'bad': product_data.bad
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
@@ -128,11 +117,11 @@ class DetailPaging(APIView):
         print(state)
 
         if state == 'all':
-            review_data = Review.objects.filter(prd_id=prd_id).values().order_by('review_num')
+            review_data = Product.objects.get(id=prd_id).count
         elif state == 'good':
-            review_data = Review.objects.filter(prd_id=prd_id).filter(good_or_bad=1).values().order_by('review_num')
+            review_data = Product.objects.get(id=prd_id).good
         elif state == 'bad':
-            review_data = Review.objects.filter(prd_id=prd_id).filter(good_or_bad=0).values().order_by('review_num')
+            review_data = Product.objects.get(id=prd_id).bad
         else:
             return Response({'detail': 'Invalid state.'}, status=400)
 
@@ -145,7 +134,7 @@ class DetailPaging(APIView):
 
         return Response({
             "reviews": list(review_page),
-            "total": review_data.count()
+            "total": review_data
         }, status=200)
 
 class ExcelDownload(APIView):
@@ -159,6 +148,12 @@ class ExcelDownload(APIView):
         response = excel_download(download, start, end)
 
         return response
+
+class GetPrdId(APIView):
+    def get(self, request):
+        prd_id = request.GET.get('prdId')
+
+        return Response({'prdName': Product.objects.get(id=prd_id).name}, status=200)
 
 
 # Create your views here.

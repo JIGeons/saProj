@@ -132,8 +132,6 @@ def scrapping():
         # for prd in prd_list를 해봤지만 동적으로 크롤링 할 시 항상 같은 코드가 같은건 아닌거 같다! 그러므로 페이지가 돌아올때마다 list를 다시 찾고
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
 
-        time.sleep(0.5)
-
         prev_page_source = driver.page_source
 
         try:
@@ -180,6 +178,7 @@ def scrapping():
                 prd_id = data.get("prd_id")
                 prd_name = data.get("prd_name")
                 recent_review_num = data.get("recent_review_num")
+                print(f"{prd_name} 상품 스크래핑 중....")
 
             # 리스트의 길이 확인
             board_len = len(board_info)

@@ -66,7 +66,7 @@ const Td = styled.td`
 `;
 
 // 라디오 및 체크박스 스타일 정의
-const RadioCheckbox = styled.input`
+const Checkbox = styled.input`
   margin: 0 5px;
 `;
 
@@ -91,11 +91,9 @@ const AdminPage = () => {
   const [admin, setAdmin] = useState("");
   const [users, setUsers] = useState([]);
   const [total, setTotal] = useState("");
-  const [state, setState] = useState("approve");
+  const [state, setState] = useState("approve");  // "approval" 또는 "management"
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedApprovalUserId, setSelectedApprovalUserId] = useState(null);
-  const [selectedToggleAdminUserId, setSelectedToggleAdminUserId] = useState(null);
-  const [activeTab, setActiveTab] = useState("approval"); // "approval" 또는 "management"
+  const [count, setCount] = useState(0)
 
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -110,7 +108,13 @@ const AdminPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${url}/getUsers/?id=${userid}&page=${currentPage}&state=${state}&page=${currentPage}`);
+      const response = await axios.post(`${url}/getUsers/`,{
+        state:state,
+        page:currentPage
+      },{
+        headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+      });
+
       setAdmin(response.data.admin);
       setUsers(response.data.users);
       setTotal(response.data.total);
@@ -122,14 +126,16 @@ const AdminPage = () => {
   const save = async (updateData) => {
     try {
       const update = await axios.post(`${url}/save/`,{
-        id: userid,
         page: currentPage,
         state: state,
         update: updateData
+      },{
+        headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
       }).then((response) => {
         setAdmin(response.data.admin);
         setUsers(response.data.users);
         setTotal(response.data.total);
+        setCount(0)
       })
     } catch (error) {
       console.error('Error fetching user list:', error.message);
@@ -151,28 +157,23 @@ const AdminPage = () => {
 
     if(selectedRows.filter(user => user.userId == userId).length === 0) {
       setSelectedRows([...selectedRows, user]);
+      setCount(count+1);
     } else {
       setSelectedRows([...(selectedRows.filter(user => user.userId !== userId)), user]);
+      setCount(count-1);
     }
   };
 
   const updateUserAdmin = (userId, admin) => {
     const user = {userId : userId, admin: admin};
 
-    console.log(selectedRows)
     if(selectedRows.filter(user => user.userId === userId).length == 0) {
       setSelectedRows([...selectedRows, user]);
+      setCount(count+1);
     } else {
       setSelectedRows(selectedRows.filter(user => user.userId !== userId));
+      setCount(count-1);
     }
-  };
-
-  const uncheckRadio = () => {
-    const radioButtons = document.querySelectorAll('input[type="radio"]:checked');
-  
-    radioButtons.forEach(radio => {
-      radio.checked = false;
-    });
   };
 
   return (
@@ -205,21 +206,21 @@ const AdminPage = () => {
                 <Td>{user.name}</Td>
                 <Td>{user.email}</Td>
                 <Td>
-                  {user.status === 0 && '승인 대기'}
-                  {user.status === 1 && '승인 완료'}
-                  {user.status === 2 && '승인 거절'}
+                  승인 대기
                 </Td>
                 <Td>
-                  <RadioCheckbox
-                    type="radio"
+                  <Checkbox
+                    type="checkbox"
                     name={`user-${index}`}
+                    checked={selectedRows.filter(users => users.userid === user.userid).status === 1 ? true : false}
                     onChange={() => updateUserStatus(user.userid, user.status + 1)}
                   />
                 </Td>
                 <Td>
-                  <RadioCheckbox
-                    type="radio"
+                  <Checkbox
+                    type="checkbox"
                     name={`user-${index}`}
+                    checked={selectedRows.filter(users => users.userid === user.userid).status === 2 ? true : false}
                     onChange={() => updateUserStatus(user.userid, user.status + 2)}
                   />
                 </Td>
@@ -227,7 +228,7 @@ const AdminPage = () => {
             ))}
             <tr>
               <Td colSpan={7} style={{ textAlign: 'right' }}>
-                <SaveButton type="button" onClick={() => { save(selectedRows); uncheckRadio(); }}>
+                <SaveButton type="button" onClick={() => { save(selectedRows);}}>
                   저장
                 </SaveButton>
               </Td>
@@ -259,7 +260,7 @@ const AdminPage = () => {
                 <Td>{user.is_admin === 0 ? '일반 사용자' : '관리자'}</Td>
                 <Td>
                   {user.is_admin === 0 && (
-                    <RadioCheckbox
+                    <Checkbox
                       type="checkbox"
                       name={`user-${index}`}
                       onClick={() => updateUserAdmin(user.userid, 1)}

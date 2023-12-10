@@ -328,7 +328,9 @@ const ProductList = () => {
   const url = 'http://localhost:8000/posts'
 
   useEffect(() => {
-    axios.get(`${url}/product_list/`)
+    axios.get(`${url}/product_list/`,{
+      headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+    })
       .then(response => {
         setProducts(response.data.products);
         setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
@@ -405,11 +407,21 @@ const ProductList = () => {
     console.log(reviewStartDate)
     console.log(reviewEndDate)
     console.log(excelDownload)
-    axios.post(`${url}/exceldownload/`, {
+    const response = axios.post(`${url}/exceldownload/`, {
       start: reviewStartDate,
       end: reviewEndDate,
       download: excelDownload
-    })
+    }, {
+      responseType: 'blob', // 응답 형식을 blob으로 설정
+    });
+
+    const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('downlad', '드시모네_리뷰_데이터.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
     // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
     console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");

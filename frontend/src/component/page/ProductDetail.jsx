@@ -10,6 +10,7 @@ import Pagination from "react-js-pagination";
 
 import CustomPaginationContainer from '../ui/CustompagContainer';
 import CustomPaginationStyled from '../ui/CustomPagination';
+import ExcelButton from '../ui/ExcelButton';
 
 const Container = styled.div`
   display: flex;
@@ -269,7 +270,11 @@ const ProductDetail = () => {
         </ProductDetails>
       </ProductInfoContainer>
       <ReviewContainer>
-        <h1>** {selectedLabel} 리뷰 내용 **</h1>
+        <div styled={{display:'flex'}}>
+          <ExcelButton>엑셀 저장</ExcelButton>
+          <h1>** {selectedLabel} 리뷰 내용 **</h1>
+          <button>수정</button>
+        </div>
         { modify === false &&
           <table>
             <thead>

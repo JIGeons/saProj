@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
 from django.utils.decorators import method_decorator
@@ -59,8 +59,14 @@ class LoginView(APIView):
         if user is not None:
             # 승인완료 상태
             if user.status == 1:
+                login(request, user)
+
+                # 토큰 발급
+                token, created = Token.objects.get_or_create(user=user)
+
                 return Response({
-                    "success": True
+                    "success": True,
+                    'token': token.key
                 }, status=status.HTTP_200_OK)
             # 승인 대기 상태
             elif user.status == 0:
@@ -96,7 +102,9 @@ class SignUpView(APIView):
             })
 
             return Response({'success': True})
-        except :
+
+        except Exception as e:
+            print(f"error : {e}")
             return Response({'success': False, 'message': 'signup Failed'}, status=400)
 
 class SendEmailView(APIView):
@@ -128,18 +136,19 @@ class findIdView(APIView):
             # 가입 되어 있지 않은 아이디일 경우 success response
             return JsonResponse({'success': True})
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class getUsersView(APIView):
-    def get(self, request):
-        userid = self.request.GET.get('id')
-        currentPage = self.request.GET.get('page')
-        state = self.request.GET.get('state')
-
-        user = User.objects.get(userid=userid)
+    def post(self, request):
+        user = request.user
+        print(user)
+        currentPage = self.request.data.get('page')
+        state = self.request.data.get('state')
 
         if state == 'approve':
             users = User.objects.filter(status=0).values().order_by('name')
         elif state == 'user':
-            users = User.objects.exclude(userid=userid).filter(status=1).values().order_by('name')
+            users = User.objects.exclude(userid=user.userid).filter(status=1).values().order_by('name')
         else:
             return Response({"message": "Invalid data."}, status=400)
 
@@ -159,17 +168,21 @@ class getUsersView(APIView):
         print(users.count())
         return Response(response_data, status=200)
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class UserUpdate(APIView):
     def post(self, request):
-        userid = request.data.get('id')
+        userid = request.user.userid
+
         currentPage = request.data.get('page')
         state = request.data.get('state')
         update = request.data.get('update')
-        status = False
+        status = False      # 가입 승인, 거절 메일을 보내기 위한 변수 true는 status가 변경 된것이므로 메일을 전송한다.
 
+        print("출력됨?")
         for updateUser in update:
             try:
-                user_update = User.objects.get(userid=updateUser.get('userId'))
+                user_update = User.objects.get(userid=updateUser.get('userid'))
                 if updateUser.get('status') != None:
                     user_update.status = updateUser.get('status')
                     status = True
@@ -178,15 +191,14 @@ class UserUpdate(APIView):
 
                 user_update.save()
 
+                # status가 변경이 되었을때만 메일 전송
                 if status and user_update.status == 1:
                     sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
                 elif status and user_update.status == 2:
                     sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
-            except :
+            except Exception as e:
+                print(f"error : {e}")
                 return Response({"message": "user status update failed"}, status=400)
-
-
-        user = User.objects.get(userid=userid)
 
         if state == 'approve':
             users = User.objects.filter(status=0).values().order_by('name')
@@ -204,10 +216,26 @@ class UserUpdate(APIView):
 
         response_data = {
             'users': list(users_page),
-            'admin': user.name,
+            'admin': userid,
             'total': users.count(),
         }
 
         return Response(response_data, status=200)
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class getUserData(APIView):
+    def get(self, request):
+        user = UserSerializer(request.user)
+
+        return Response({'user': user.data}, status=200)
+
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class LogoutView(APIView):
+    def get(self, request):
+        logout(request)
+
+        return Response({'success': 'logout complete'}, status=200)
 
 # Create your views here.

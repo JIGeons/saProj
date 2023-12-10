@@ -3,6 +3,9 @@ import pandas as pd
 from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import render
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,6 +16,8 @@ import io
 
 from saApp.models import Product, Review
 from .serializer import ProductSerializer, ReviewSerializer
+from users.serializer import UserSerializer
+
 
 def excel_download(reviews, start, end):
     print(f"reviews = {reviews}, start = {start}, end = {end}")
@@ -72,13 +77,18 @@ def excel_download(reviews, start, end):
 
     return response
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class productView(APIView):
     def get(self, request, *args, **kwargs):
+        user = UserSerializer(request.user)
         products = Product.objects.all()
         product_serializer = ProductSerializer(products, many=True)
 
-        return Response({'products': product_serializer.data}, status=status.HTTP_200_OK)
+        return Response({'products': product_serializer.data, 'user': user.data}, status=status.HTTP_200_OK)
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 class PrdDetailView(APIView):
     def get(self, request, *arg, **kwargs):
         prd_id = self.request.GET.get('prdid')
@@ -147,7 +157,7 @@ class ExcelDownload(APIView):
 
         response = excel_download(download, start, end)
 
-        return response
+        return Response(response, status=200)
 
 class GetPrdId(APIView):
     def get(self, request):

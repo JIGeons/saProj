@@ -37,28 +37,32 @@ const NavLink = styled(Link)`
 const Header = () => {
     const location = useLocation();
     const [logoText, setLogoText] = useState("");
+    const [user, setUser] = useState({});
+    const token = localStorage.getItem('authToken');
 
     useEffect(() => {
       const getLogoText = async () => {
+
         try {
+          await axios.get('http://localhost:8000/users/adminName/', {
+            headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+          }).then((response) => {
+            setUser(response.data.user);
+          })
+
           let prd_name = "";
-          console.log(location.pathname)
+
           if (location.pathname === "/posts/productlist") {
             prd_name = "상품목록";
           }
 
           else if(location.pathname === "/adminpage/") {
-            let user_name="";
-            await axios.get(`http://localhost:8000/users/adminName/`)
-            .then((response) => {
-              user_name = response.data.adminName;
-            })
-            prd_name = `${user_name}님의 관계자 페이지`;
+            prd_name = `${user.name}님의 관계자 페이지`;
           }
 
           else if(location.pathname.startsWith("/posts/productlist/productdetail/")){
             const prd_id = location.pathname.split('/').pop();
-            await axios.get(`http://localhost:8000/posts/prdId/?prdId=${prd_id}`)
+            await axios.post(`http://localhost:8000/posts/prdId/?prdId=${prd_id}`)
             .then((response) => {
               prd_name = response.data.prdName
             })
@@ -73,14 +77,29 @@ const Header = () => {
       getLogoText();
     }, [location.pathname]);
 
+    console.log(token);
+
+    const Logout = async() => {
+      await axios.get('http://localhost:8000/users/logout/', {
+        headers: {'Authorization': `Token ${token}`}
+      }).then((response) => {
+        localStorage.removeItem('authToken'); // 토큰 삭제
+
+        window.location.href = '/';  // 로그인 페이지 경로로 리다이렉트
+      })
+    };
+
     return (
         <>
             <HeaderContainer>
                 <Logo>{logoText}</Logo>
                 <Navigation>
-                <NavLink to="/">Home</NavLink>
-                <NavLink to="/posts/productlist">Products</NavLink>
-                <NavLink to="/about">About</NavLink>
+                  <p>{user.name}님 </p>
+                  {user.is_admin ?
+                    <NavLink to ="/adminPage">관계자 페이지</NavLink> : ""
+                  }
+                  <NavLink to="/posts/productlist">상품 목록</NavLink>
+                  <NavLink onClick={() => Logout()}>로그아웃</NavLink>
                 </Navigation>
             </HeaderContainer>
             <Outlet />

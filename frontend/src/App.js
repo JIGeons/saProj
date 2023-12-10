@@ -19,7 +19,7 @@ function App() {
             <Route element={<Header />}>
               <Route path="posts/productlist/" element={<Product />} />
               <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
-              <Route path="/adminPage/user/:id" element={<AdminPage />} />
+              <Route path="/adminPage" element={<AdminPage />} />
               <Route path="mycomponent" element={<MyComponent />} />
             </Route>
           </Routes>

@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="38af93cd-4887-488d-847d-ce7b16ba16ee" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" afterDir="false" />
@@ -23,6 +24,10 @@
       <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/login.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/signup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/signup.jsx" afterDir="false" />
+=======
+    <list default="true" id="29a45207-3c8a-43f6-a646-e7aa5b0cff8f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+>>>>>>> 0fede3e0dd8a5513f1b26430c9f012a00ef8ebab
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,15 +44,30 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
+<<<<<<< HEAD
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="2YTqARSD9RU1l3hF73n8c1WlWtY" />
+=======
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/saProj/saProj/settings.py" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2Yt70Q1R9tOMUR39fOVJJfhrqwE" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+>>>>>>> 0fede3e0dd8a5513f1b26430c9f012a00ef8ebab
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
@@ -68,11 +88,35 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\project\backend\saProject\saProj\saProj" />
+=======
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Project/backend/saProject&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\saProj\backend\saProject\saProj\saProj" />
+>>>>>>> 0fede3e0dd8a5513f1b26430c9f012a00ef8ebab
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
+<<<<<<< HEAD
       <changelist id="38af93cd-4887-488d-847d-ce7b16ba16ee" name="Changes" comment="" />
       <created>1700559772109</created>
       <option name="number" value="Default" />
@@ -93,10 +137,30 @@
       <workItem from="1701648145036" duration="731000" />
       <workItem from="1701654346125" duration="24125000" />
       <workItem from="1701822110804" duration="5251000" />
+=======
+      <changelist id="29a45207-3c8a-43f6-a646-e7aa5b0cff8f" name="Changes" comment="" />
+      <created>1701332800806</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1701332800806</updated>
+      <workItem from="1701332814277" duration="100000" />
+      <workItem from="1701333033374" duration="4915000" />
+      <workItem from="1701648481903" duration="91000" />
+      <workItem from="1701648579873" duration="54000" />
+      <workItem from="1701648643391" duration="10000" />
+      <workItem from="1701734518171" duration="15540000" />
+      <workItem from="1701822109755" duration="11194000" />
+>>>>>>> 0fede3e0dd8a5513f1b26430c9f012a00ef8ebab
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+<<<<<<< HEAD
+=======
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+>>>>>>> 0fede3e0dd8a5513f1b26430c9f012a00ef8ebab
 </project>

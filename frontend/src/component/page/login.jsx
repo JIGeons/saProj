@@ -118,24 +118,32 @@ const Login = () => {
 
   const handleLogin = async(e) => {
     e.preventDefault();
-    
-    const login = await axios.post(`${url}/login/`, {
-      userId: userId,
-      password: password
-    })
 
-    // 로그인 성공 시 처리
-    if (login.data.success) {      
-      alert("로그인 성공");
-      navigate(`posts/productlist/`);
-    } 
-    // 로그인 실패 시
-    else if (login.data.status == 0){
-      setError("승인 대기 중 입니다. 관리자에게 문의 하세요");
-    } else if (login.data.status == 2){
-      setError("승인 거절입니다. 관리자에게 문의 하세요");
-    } else {
-      setError("아이디 또는 비밀번호를 잘못 입력했습니다.")
+    if (userId === "" && password === ""){
+      setError("아이디와 비밀번호를 입력해주세요.")
+    }
+    else {
+      const login = await axios.post(`${url}/login/`, {
+        userId: userId,
+        password: password,
+      })
+
+      // 로그인 성공 시 처리
+      if (login.data.success) {   
+        localStorage.setItem('authToken', login.data.token);
+
+        setError("");
+        alert("로그인 성공");
+        navigate(`posts/productlist`);
+      } 
+      // 로그인 실패 시
+      else if (login.data.status == 0){
+        setError("승인 대기 중 입니다. 관리자에게 문의 하세요");
+      } else if (login.data.status == 2){
+        setError("승인 거절입니다. 관리자에게 문의 하세요");
+      } else {
+        setError("아이디 또는 비밀번호를 잘못 입력했습니다.")
+      }
     }
   };
 

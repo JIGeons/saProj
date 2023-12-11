@@ -1,3 +1,4 @@
+
 """
 URL configuration for saProj project.
 
@@ -17,10 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from saApp.views import product_page
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('posts/', include('posts.urls')),
     path('product/', product_page),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

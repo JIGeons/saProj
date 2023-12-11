@@ -8,7 +8,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   font-family: 'Arial', sans-serif;
-  padding: 20px;
+  padding: 50px;
 `;
 const LoadingContainer = styled.div`
   margin-top: 20px;

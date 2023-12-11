@@ -1,4 +1,4 @@
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/pagination.css';
 
 import React, { useEffect, useState, useRef } from "react";
@@ -7,7 +7,8 @@ import Chart from "chart.js/auto";
 import axios from "axios";
 import styled from "styled-components";
 import Pagination from "react-js-pagination";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import CustomPaginationContainer from '../ui/CustompagContainer';
 import CustomPaginationStyled from '../ui/CustomPagination';
 
@@ -24,7 +25,7 @@ const LoadingContainer = styled.div`
 `;
 const ProductInfoContainer = styled.div`
   display: flex;
-  padding: 20px;
+  padding: 10px;
   margin-top: 20px;
 `;
 
@@ -137,23 +138,49 @@ const ReviewContainer = styled.div`
 const ProductDetail = () => {
   const params = useParams();
   const productId = params.id;
-
   const [product, setProduct] = useState({});
   const [reviews, setReviews] = useState([]);
   const [state, setState] = useState("all");
-  const [showreviews, setShowreviews] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState(null);
+
+  //const [showreviews, setShowreviews] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(null); // 긍정, 부정 선택해서 리뷰 보기 위함
   const [loading, setLoading] = useState(true);
+  const [modify, setModify] = useState("normal");
+
+  /* 차트 구성에 필요한 부분 */
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState("");
-
   const [effect, setEffect]= useState("False");
+
+  /* 추가한 부분 */
+  const [selectedReviews, setSelectedReviews] = useState([]);
+
+  /* datepicker 추가 부분 */
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+  };
 
   const url = 'http://localhost:8000/posts/product_detail'
 
+  /* 추가한 부분 */
+  const handleCheckboxChange = (reviewId) => {
+    setSelectedReviews((prevSelectedReviews) => {
+      if (prevSelectedReviews.includes(reviewId)) {
+        return prevSelectedReviews.filter((id) => id !== reviewId);
+      } else {
+        return [...prevSelectedReviews, reviewId];
+      }
+    });
+  }
+
+  /* 원형 그래프 만드는 함수 */
   const createChart = (totalCount, good, bad) => {
     if (chartInstance.current) {
       chartInstance.current.destroy();
@@ -183,6 +210,33 @@ const ProductDetail = () => {
     });
   };
 
+  /* 긍정부정 수정 버튼 */
+  const handleEditButtonClick = async () => {
+    if(modify === "normal") {
+      setModify("modify");
+    }
+    else {
+      console.log(selectedReviews);
+      console.log(productId);
+      if (selectedReviews.length > 0) {
+        try {
+          const response = await axios.post(
+            "http://localhost:8000/posts/product_detail/edit_reviews",
+            {
+              selectedReviews: selectedReviews,
+              productId: productId,
+            }).then((response)=> {
+              setReviews(response.data.reviews);
+            })
+        } catch (error) {
+          console.error('Error', error.message);
+        }
+        setSelectedReviews([]);
+      } else {
+        alert("수정할 리뷰를 선택해주세요.");
+      }
+    }
+  };
   useEffect(() => {
     loadpage();
   }, []);
@@ -241,6 +295,11 @@ const ProductDetail = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  
+  const handleDateFilter = async () => {
+    changeState('')
+  };
+//////////////////////////////////////////////////////////////
 
   return (
     <Container>
@@ -258,7 +317,9 @@ const ProductDetail = () => {
             <ReviewsButton onClick={() => changeState('good')}> 긍정 </ReviewsButton>
             <ReviewsButton onClick={() => changeState('bad')}> 부정 </ReviewsButton>
           </div>
-          <PieChart style={{ width: "100%", display: "flex" }}>
+          
+          <p>{startDate.toDateString} ~ {endDate.toDateString} 까지의 리뷰 내용</p>
+          <PieChart style={{ width: "70%", display: "flex" }}>
             <canvas
               ref={chartRef}
               width={300}
@@ -266,44 +327,96 @@ const ProductDetail = () => {
               style={{ width: "300px", height: "200px" }}
             />
           </PieChart>
+
         </ProductDetails>
       </ProductInfoContainer>
       <ReviewContainer>
-        <h1>** {selectedLabel} 리뷰 내용 **</h1>
-        <table>
-          <thead>
-            <tr>
-              <th className='review-num'>리뷰 번호</th>
-              <th className='title'>제목</th>
-              <th className='content'>내용</th>
-              <th className='name'>이름</th>
-              <th className="count">조회수</th>
-              <th className="good-bad">긍·부정</th>
-              <th className="date">날짜</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reviews.map((review) => (
-              <tr key={`${state}-${review.id}`}>
-                <td>{review.review_num}</td>
-                <td>{review.title}</td>
-                <td style={{ width: "50%" }}>{review.content}</td>
-                <td>{review.user_name}</td>
-                <td>{review.count}</td>
-                <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
-                  {review.good_or_bad == 1 ? '긍정' : '부정'}
-                </td>
-                <td>{review.date}</td>
+        <div>
+          <>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+            />
+          </>
+          <input type='button' value={'조회'} onClick={handleDateFilter} />
+          </div>
+        <h1 style={{fontWeight: "bold"}}>리뷰 내용</h1>
+        <button onClick={() => handleEditButtonClick()}>수정</button>
+        {modify === "normal" &&
+          <table>
+            <thead>
+              <tr>
+                <th className='title'>제목</th>
+                <th className='content'>내용</th>
+                <th className='name'>이름</th>
+                <th className="good-bad">긍·부정</th>
+                <th className="date">날짜</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {reviews.map((review) => (
+                <tr key={`${state}-${review.id}`}>
+                  <td>{review.title}</td>
+                  <td style={{ width: "50%" }}>{review.content}</td>
+                  <td>{review.user_name}</td>
+                  <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
+                    {review.good_or_bad == 1 ? '긍정' : '부정'}
+                  </td>
+                  <td>{review.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+        {
+          modify === "modify" &&
+          <table>
+            <thead>
+              <tr>
+                <th className='title'>제목</th>
+                <th className='content'>내용</th>
+                <th className='name'>이름</th>
+                <th className="good-bad">긍·부정</th>
+                <th className="date">날짜</th>
+                <th>수정</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reviews.map((review) => (
+                <tr key={`${state}-${review.id}`}>
+                  <td>{review.title}</td>
+                  <td style={{ width: "50%" }}>{review.content}</td>
+                  <td>{review.user_name}</td>
+                  <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
+                    {review.good_or_bad == 1 ? '긍정' : '부정'}
+                  </td>
+                  <td>{review.date}</td>
+                  <td>
+                    <input type='checkbox' checked={selectedReviews.includes(review.review_num)} onChange={() => handleCheckboxChange(review.review_num)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
         <CustomPaginationContainer>
           <Pagination
             style={CustomPaginationStyled}
             activePage={currentPage}
             itemsCountPerPage={10}
-            totalItemsCount={total}
+            totalItemsCount={Number(total)}
             pageRangeDisplayed={10}
             prevPageText={"<"}
             nextPageText={">"}

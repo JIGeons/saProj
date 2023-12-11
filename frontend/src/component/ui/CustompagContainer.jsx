@@ -1,17 +1,9 @@
 import styled from 'styled-components';
-import Pagination from 'react-js-pagination';
 
-const CustomPaginationStyled = styled(Pagination)`
-  .pagination {
-    list-style: none;
-    display: flex;
-    padding: 0;
-    margin: 0;
-
-    .disabled {
-      margin-right: 10px;
-    }
-  }
+const CustomPaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-export default CustomPaginationStyled;
+export default CustomPaginationContainer;

@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import time
 import json
+import re
 
 from ..models import Product, Review
 
@@ -39,7 +40,7 @@ def scrapping():
 
     # 특정 prd_id의 최신 review_num를 조회
     def recent_review(prd_id):
-        review_num = Review.objects.filter(prd=find_product(prd_id)).aggregate(max_review_num=Max('review_num'))
+        review_num = Review.objects.filter(prd_id=prd_id).aggregate(max_review_num=Max('review_num'))
         recent_review_num = review_num['max_review_num']
         return recent_review_num
 
@@ -62,17 +63,18 @@ def scrapping():
         product.save()
 
     # 리뷰데이터를 models를 사용하여 데이터베이스에 저장
-    def insert_reviews(prd_id, review_num, user_name, title, date, count, content):
+    def insert_reviews(prd_id, review_num, user_name, title, date, content):
         product = find_product(prd_id)
+
         review = Review(
             prd=product,
             review_num=review_num,
             user_name=user_name,
             title=title,
             date=date,
-            count=count,
             content=content
         )
+
         review.save()
 
     # 크롤링한 page_source를 파싱하고 board_info를 return하는 함수
@@ -154,7 +156,7 @@ def scrapping():
             count_num += 1
             # 여러가지 방법을 써봤지만 sleep을 이용하지 않으면 parsing이 제대로 되지 않아서 parsing에 문제가 안생기는 최소 sleep을 걸어 두었습니다.
 
-            time.sleep(0.3)
+            #time.sleep(0.3)
 
             page_source = driver.page_source
 
@@ -171,13 +173,29 @@ def scrapping():
             # 리스트의 길이 확인
             board_len = len(board_info)
 
-            # 리뷰가 없는 경우는 바로 break (리스트의 맨 처음에는 header가 들어있고 마지막줄에는 '리뷰가 없습니다' 가 들어있으므로 리뷰가 없을 때 list의 길이는 2)
-            if board_len < 3:
+            # board_len < 1인 경우는 페이지가 아직 로딩이 안되서 리뷰 board가 아직 안 뜬 것이므로 continue를 해서 board가 뜨기 까지 기다린다.
+            if board_len < 1:
+                continue
+
+            # 리뷰가 없는 경우는 바로 break (div class 명이 ~~ empty일 경우)
+            if board_info[0].find('div').get('class') == 'board-list-wrap empty':
                 print("리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
                 break
 
-            # 현재 가장 리뷰페이지 가장 처음에 있는 리뷰의 번호를 가지고옴
-            current_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
+
+            else : # 현재 가장 리뷰페이지 가장 처음에 있는 리뷰의 번호를 가지고 옴
+                while True:
+                    # 페이지 소스를 다시 가지고 와서
+                    page_source = driver.page_source
+                    # 페이지 파싱을 다시 한다
+                    board_info = page_Parsing(page_source)
+
+                    try :
+                        # 현재 페이지의 리뷰 번호를 가지고 온다
+                        current_review_num = int(re.findall(r'\d+', board_info[0].get('id'))[0])
+                        break
+                    except :
+                        continue
 
             # 이전 페이지 소스의 리뷰번호와 현재 페이지 소스의 리뷰 번호가 같으면 로드가 아직 안 된 것 이므로
             # 페이지가 로드 될 때 까지 반복해서 로드 한다.
@@ -186,8 +204,9 @@ def scrapping():
                 page_source = driver.page_source
                 # 페이지 파싱을 다시 한다
                 board_info = page_Parsing(page_source)
+
                 # 현재 페이지의 리뷰 번호를 가지고 온다
-                current_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
+                current_review_num = int(re.findall(r'\d+', board_info[0].get('id'))[0])
 
             # 데이터베이스 가장 최근 리뷰번호와 페이지 리뷰의 번호가 같으면 최신 리뷰가 없는 것이므로 break(다음 product로 넘어감)
             if recent_review_num == current_review_num:
@@ -195,10 +214,10 @@ def scrapping():
                 break
 
             # 0번째는 header, 마지막 index는 '리뷰가 없습니다' 이므로 1번째부터 last_index-1까지 for문 반복
-            for i in range(1, len(board_info) - 1):
+            for i in range(0, len(board_info) - 1):
                 review_info = board_info[i]
                 # 각 필요한 정보들만 찾아서 변수에 저장 + 형 변환
-                review_num = int(review_info.find('p', {'class': 'board-list-index'}).text)
+                review_num = int(re.findall(r'\d+', board_info[i].get('id'))[0])
 
                 # 크롤링을 하다가 현재 리뷰 번호가 데이터베이스의 최신 리뷰번호가 같아지면 더 이상 크롤링 할 필요가 없기 때문에 다음 상품으로 넘어간다.
                 if recent_review_num == review_num:
@@ -207,10 +226,10 @@ def scrapping():
                     escape = True
                     break
 
+
                 title = review_info.find('p', {'class': 'board-list-title'}).text
                 user_name = review_info.find('p', {'class': 'board-list-writer'}).text
                 date = datetime.strptime(review_info.find('p', {'class': 'board-list-date'}).text, date_format)
-                count = int(review_info.find('p', {'class': 'board-list-count'}).text)
                 content = review_info.find('div', {'class': 'board-list-content'}).text
                 # \n은 불필요한거 같아서 띄어쓰기로 대체
                 content = content.replace('\n', ' ')
@@ -219,36 +238,31 @@ def scrapping():
                 # title에 가끔 작은 따옴표를 사용하시는 분이 있어서 작은 따옴표가 있으면 삭제
                 title = title.replace('\'', '')
 
-                try:
-                    # 크롤링한 데이터를 데이터베이스에 저장
-                    ####################
-                    insert_reviews(prd_id, review_num, user_name, title, date, count, content)
-                    ####################
-                except Exception as e:
-                    # 상품을 데이터 베이스에 저장을 하다가 오류가 생겼을 때 해당 상품의 이름, 리뷰 번호, 내용을 출력 (오류가 난 리뷰의 위치를 찾기 위함)
-                    print(f"상품 = {prd_name},  리뷰 번호 = {review_num}, 내용 = {content}")
-                    print(f"사용자명 = {user_name}")
-                    # 오류 내용을 출력하여 어떤 오류가 났는지 확인함
-                    print("오류 : ", e)
-                    break
+                # 크롤링한 데이터를 데이터베이스에 저장
+                insert_reviews(prd_id, review_num, user_name, title, date, content)
 
             # 현재 리뷰의 첫 번째 리뷰의 번호를 이전 리뷰번호로 저장
-            pre_review_num = int(board_info[1].find('p', {'class': 'board-list-index'}).text)
+            pre_review_num = int(re.findall(r'\d+', board_info[0].get('id'))[0])
 
             # excape가 true면 모든 최신 리뷰가 업데이트 된 것이므로 break
             if escape: break
 
-            # 리뷰가 10개가 안되는 경우(즉, 페이지가 하나 밖에 없을 경우 break)
-            if board_len < 12:
+            # 리뷰가 10개가 안되는 경우(즉, 페이지가 하나 밖에 없을 경우 break 또는 마지막 페이지 일 경우)
+            if 1 < board_len and board_len < 11:
                 print('끝')
                 break
 
+            paging = BeautifulSoup(page_source, 'html.parser')
+            ul_list = paging.find('div', {'class': 'board-paging'}).find_all('ul')
+
             try:
+                # board-paging에서 ul을 찾아서 리스트로 만들고 ul리스트 마지막 li태그의 class가 on이 되면 마지막 페이지므로 break
+                if(ul_list[len(ul_list)-1].find('li').get('class')[0] == 'on'):
+                    print(f'{prd_id} 스크래핑 끝!')
+                    break
+            except:
                 # selenium으로 버튼을 찾아 클릭하게 되면 화면에 버튼이 나와야지만 클릭을 할 수 있기 때문에 JavaScript를 사용하여 해당 버튼을 찾고 클릭함
                 driver.execute_script("document.querySelector('button.next').click();")
-            except:
-                print('끝')
-                break
 
         # -------------------------------------------------------------------------
         try:

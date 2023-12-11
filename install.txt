@@ -6,15 +6,21 @@ pip install eventlet
 pip install mysqlclient
 pip install selenium
 pip install bs4
-pip install openai=0.28
+pip install openai==0.28
 pip install django-cors-headers
 pip install djangorestframework
-pip install djangorestfromework-simplejwt
+pip install djangorestframework-simplejwt
+
+pip install celery[redis], django-celery-beat, django-celery-results, eventlet, mysqlclient, selenium, bs4, openai==0.28, django-cors-headers, djangorestframework, djangorestframework-simplejwt
 
 frontend install 목록
 npm install react-router-dom
 npm install styled-components
 npm install axios
+npm install --save chart.js react-chartjs-2
+npm install react-js-pagination
+
+npm install react-router-dom, styled-components, axios, react-js-pagination
 
 git에 push하기전에 아래 명령어 실행 후 push
 git config --global core.autocrlf false

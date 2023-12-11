@@ -11,7 +11,7 @@ openai.api_key = settings.OPEN_API_KEY
 # open ai
 def classification(reviews):  # 리뷰들의 10개 묶음
     print("질문 시작!")
-    reviews += '위 문장들 하나하나씩 긍정이면 Y , 부정이면 N으로 답변해 주는데 {"answer": "Y"} 처럼 JSON 형태로 답변해 줘. sep="\n"'
+    reviews += '{} 이 괄호 안에 묶인 문장들이 하나의 리뷰이고 각각 리뷰가 긍정이면 Y , 부정이면 N으로 답변해 주는데 {"answer": "Y"} 처럼 JSON 형태로 답변해 줘. sep="\n"'
     # '위 문장들 하나하나씩 긍정이면 1 , 부정이면 0으로 답변해주는데, 답변은 답변만 담아서 배열 형식으로 해줘'
     #print(reviews)
     good_or_bad = openai.ChatCompletion.create(
@@ -45,7 +45,7 @@ def review_evaluation():
         review_content = review.content
         review_num = review.review_num
 
-        review_content = '\"' + review_content + '\"\n'
+        review_content = '{' + review_content + '}'
         contents += review_content
         num_list.append(review_num)
 
@@ -83,22 +83,24 @@ def review_evaluation():
                     print("답변 완료")
                     count += 1
                     if json_gb["answer"] == 'Y':
-                        review_update.update(good_or_bad=1)
+                        review_update.good_or_bad=1
                         countGood += 1
                     else:
-                        review_update.update(good_or_bad=0)
+                        review_update.good_or_bad=0
                         countBad += 1
+                    review_update.save()
                     review_update_saving.append(review_update.good_or_bad)
                     print(f"JSONDecodeError 발생: {e}", review_update)
 
                 else:
                     count += 1
                     if json_gb["answer"] == 'Y':
-                        review_update.update(good_or_bad=1)
+                        review_update.good_or_bad = 1
                         countGood += 1
                     else:
-                        review_update.update(good_or_bad=0)
+                        review_update.good_or_bad = 0
                         countBad += 1
+                    review_update.save()
                     review_update_saving.append(review_update.good_or_bad)
 
             saving_content = '질문 번호 : \n' + str(num_list) + '\n'

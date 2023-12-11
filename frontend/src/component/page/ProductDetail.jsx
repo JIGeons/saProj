@@ -179,7 +179,9 @@ const ProductDetail = () => {
 
   const loadpage = async () => {
     await axios
-      .get(`${url}/?prdid=${productId}`)
+      .get(`${url}/?prdid=${productId}`,{
+        headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+      })
       .then((response) => {
         const totalCount = response.data.total;
         const good = response.data.good;

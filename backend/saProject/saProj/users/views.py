@@ -101,7 +101,7 @@ class SignUpView(APIView):
                 'password': password
             })
 
-            return Response({'success': True})
+            return Response({'success': True}, status=200)
 
         except Exception as e:
             print(f"error : {e}")
@@ -179,10 +179,9 @@ class UserUpdate(APIView):
         update = request.data.get('update')
         status = False      # 가입 승인, 거절 메일을 보내기 위한 변수 true는 status가 변경 된것이므로 메일을 전송한다.
 
-        print("출력됨?")
         for updateUser in update:
             try:
-                user_update = User.objects.get(userid=updateUser.get('userid'))
+                user_update = User.objects.get(userid=updateUser.get('userId'))
                 if updateUser.get('status') != None:
                     user_update.status = updateUser.get('status')
                     status = True

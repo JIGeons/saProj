@@ -311,6 +311,7 @@ const ProductList = () => {
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewStartDate, setReviewStartDate] = useState("");
@@ -404,37 +405,40 @@ const ProductList = () => {
   };
 
   const handleReviewDownload = () => {
-    console.log(reviewStartDate)
-    console.log(reviewEndDate)
-    console.log(excelDownload)
-    const response = axios.post(`${url}/exceldownload/`, {
-      start: reviewStartDate,
-      end: reviewEndDate,
-      download: excelDownload
-    }, {
-      responseType: 'blob', // 응답 형식을 blob으로 설정
-    });
+    setIsLoading(true);
+    
+    try {
+      const response = axios.post(`${url}/exceldownload/`, {
+        start: reviewStartDate,
+        end: reviewEndDate,
+        download: excelDownload
+      }, {
+        responseType: 'blob', // 응답 형식을 blob으로 설정
+      });
 
-    const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.setAttribute('downlad', '드시모네_리뷰_데이터.xlsx');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
-    console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
-    // 모달과 날짜 범위 초기화
-    setShowReviewModal(false);
-    setReviewStartDate("");
-    setReviewEndDate("");
-    setExcelDownload([]);
-    setDownloadAll(false);
-    setDownloadSelected(false);
-    setWeek(false);
-    setMonth(false);
-    setYear(false);
+      // Blob 데이터를 파일로 만들어 다운로드
+      const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const downloadLink = document.createElement('a');
+      downloadLink.href = window.URL.createObjectURL(blob);
+      downloadLink.download = '드시모네_리뷰_데이터.xlsx';
+      downloadLink.click();
+    } catch(error) {
+      console.error('파일 다운로드 오류: ', error);
+    } finally {
+      setIsLoading(false);
+      // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
+      console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
+      // 모달과 날짜 범위 초기화
+      setShowReviewModal(false);
+      setReviewStartDate("");
+      setReviewEndDate("");
+      setExcelDownload([]);
+      setDownloadAll(false);
+      setDownloadSelected(false);
+      setWeek(false);
+      setMonth(false);
+      setYear(false);
+    }
   };
 
   const handleCheckboxChange = (e, date) => {

@@ -24,7 +24,7 @@ def scrapping():
 
     # 옵션 설정
     options = webdriver.ChromeOptions()
-    #options.add_argument('headless')    # 백그라운드에서 실행 옵션
+    options.add_argument('headless')    # 백그라운드에서 실행 옵션
     options.add_argument("--disable-gpu")    # gpu 가속을 하지 않는 옵션
     options.add_argument("--disable-images")     # 이미지 로딩은 하지 않는 옵션
 

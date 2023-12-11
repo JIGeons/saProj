@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.http import FileResponse
 import io
+from urllib.parse import quote
 
 from saApp.models import Product, Review
 from .serializer import ProductSerializer, ReviewSerializer
@@ -69,11 +70,11 @@ def excel_download(reviews, start, end):
     excel.close()
     excel_data.seek(0)
 
-    # 'rb'는 파일을 이진 모드로 읽기 위한 옵션
     with open('드시모네_리뷰_데이터.xlsx', 'rb') as file:
         response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=드시모네_리뷰_데이터.xlsx'
-        response.write(excel_data.getvalue())
+
+        print(response)
 
     return response
 
@@ -96,7 +97,9 @@ class PrdDetailView(APIView):
         product_data = Product.objects.get(id=prd_id)
         product_serializer = ProductSerializer(product_data, many=False)
 
+        print("오류가 어디서 나는 것인가?")
         product_review_data = Review.objects.filter(prd_id=prd_id).values().order_by('id')
+        print("여기인가?")
 
         current_page = 1
 
@@ -157,7 +160,7 @@ class ExcelDownload(APIView):
 
         response = excel_download(download, start, end)
 
-        return Response(response, status=200)
+        return response
 
 class GetPrdId(APIView):
     def get(self, request):

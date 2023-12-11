@@ -8,18 +8,13 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saApp/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/migrations/0001_initial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/prdReviewCnt.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/prdReviewCnt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saProj/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/tasks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saving_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saving_log.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/페이지.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/adminPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/adminPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

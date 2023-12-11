@@ -12,7 +12,7 @@ from .services.scrapping_service import scrapping
 
 @shared_task
 def scrapping_review():
-    scrapping()
+    #scrapping()
     print("scrapping is done gpt question start~!!")
     review_evaluation()
     print("GPT 질문 완료. 종합하겠습니다.")

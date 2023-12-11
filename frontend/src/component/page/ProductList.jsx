@@ -413,15 +413,16 @@ const ProductList = () => {
         end: reviewEndDate,
         download: excelDownload
       }, {
-        responseType: 'blob', // 응답 형식을 blob으로 설정
+        responseType: 'arraybuffer', // 응답 형식을 blob으로 설정
+      }).then((response) => {
+        // Blob 데이터를 파일로 만들어 다운로드
+        const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = '드시모네_리뷰_데이터.xlsx';
+        downloadLink.click();
+        window.URL.revokeObjectURL(downloadLink.href);
       });
-
-      // Blob 데이터를 파일로 만들어 다운로드
-      const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const downloadLink = document.createElement('a');
-      downloadLink.href = window.URL.createObjectURL(blob);
-      downloadLink.download = '드시모네_리뷰_데이터.xlsx';
-      downloadLink.click();
     } catch(error) {
       console.error('파일 다운로드 오류: ', error);
     } finally {

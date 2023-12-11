@@ -42,25 +42,49 @@ def excel_download(reviews, start, end):
     if review_data.count() == 0:
         return 'empty data'
 
-    total = review_data.count()
-    good = review_data.filter(good_or_bad=1).count()
-    bad = review_data.filter(good_or_bad=0).count()
+    count = 0
+    for product in reviews:
+        review = review_data.filter(prd_id=product)
+        count += 1
+        # 리뷰 갯수 구하기
+        total = review.count()
+        good = review.filter(good_or_bad=1).count()
+        bad = review.filter(good_or_bad=0).count()
+        good_per = good/total
+        bad_per = bad/total
 
-    summary_df = pd.DataFrame({'총 리뷰 갯수': [total], '긍정 리뷰 갯수': [good], '부정 리뷰 갯수': [bad]})
+        # data 생성
+        summary_data = {'Total Reviews': [total],
+                        'Positive Reviews': [good],
+                        'Negative Reviews': [bad],
+                        'Positive Ratio': [good_per],
+                        'Negative Ratio': [bad_per]}
+        if count == 1 :
+            # 데이터 프레임 만들기
+            summary_df = pd.DataFrame(summary_data)
+        else :
+            summary_df = pd.concat([summary_df, pd.DataFrame(summary_data)], ignore_index=True)
+
+
+
+
+
+    summary_df = pd.DataFrame({'총 리뷰 갯수': [total], '긍정 리뷰 갯수': [good], '부정 리뷰 갯수': [bad], '긍정 리뷰 비율': [good_per], '부정 리뷰 비율': [bad_per]})
     # 리뷰 데이터를 DataFrame으로 변환
     df = pd.DataFrame.from_records(review_data)
     df = df.drop(columns=['id'])
 
     # good_or_bad 열 값 변경
-    df['good_or_bad'] = df['good_or_bad'].map({1: '긍정', 0:'부정'})
+    df['good_or_bad'] = df['good_or_bad'].map({'1': '긍정', '0':'부정'})
 
     df = df.rename(columns={'review_num': '리뷰 번호', 'prd_id': '상품 번호', 'user_name': '유저 이름', 'title': '제목', 'content': '내용', 'date': '작성 날짜', 'good_or_bad': '긍정/부정'})
-
-    print(df)
 
     # 엑셀 파일 생성
     excel_data = io.BytesIO()
     excel = pd.ExcelWriter('드시모네_리뷰_데이터.xlsx', engine='xlsxwriter')
+
+    # 상품정보 요약 시트 생성
+    summary_df.to_excel(excel, sheet_name='리뷰데이터요약', index=False)
 
     # 각 상품 별로 다른 워크시트에 데이터 작성
     for prd_id, group_df in df.groupby('상품 번호'):

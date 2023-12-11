@@ -131,8 +131,7 @@ def scrapping():
     for i in range(0, prd_length):
         # for prd in prd_list를 해봤지만 동적으로 크롤링 할 시 항상 같은 코드가 같은건 아닌거 같다! 그러므로 페이지가 돌아올때마다 list를 다시 찾고
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
-
-        prev_page_source = driver.page_source
+        time.sleep(0.3)
 
         try:
             # 이어서 다음 상품 클릭

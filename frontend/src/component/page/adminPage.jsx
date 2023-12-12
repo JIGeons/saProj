@@ -97,9 +97,6 @@ const AdminPage = () => {
 
   const [selectedRows, setSelectedRows] = useState([{userid : "", status: ""}]);
 
-  const params = useParams();
-  const userid = params.id;
-
   // 초기 users 불러오기
   useEffect(() => {
     fetchUsers();

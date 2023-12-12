@@ -118,11 +118,9 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password_ck, setPassword_ck] = useState("");
-  const [isUserIdValid, setIsUserIdValid] = useState(true);
+  const [isUserIdValid, setIsUserIdValid] = useState(false);
   const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
   const [userIdCheckMessage, setUserIdCheckMessage] = useState("");
-  const [isSignUpButtonDisabled, setIsSignUpButtonDisabled] = useState(true);
-  const [signUpErrorMessage, setSignUpErrorMessage] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [enteredVerificationCode, setEnteredVerificationCode] = useState("");
@@ -139,7 +137,6 @@ const SignUp = () => {
       const response = await axios.post(`${url}/findID/`, {
         userid: userId,
       });
-      console.log(response.data.success)
 
       if (response.data.success) {
         console.log('아이디를 생성할 수 있습니다.');
@@ -176,8 +173,6 @@ const SignUp = () => {
       password_ck &&
       isUserIdValid &&
       !passwordMatchMessage;
-
-    setIsSignUpButtonDisabled(!isAllValid);
   };
 
   const handleSignUp = async(e) => {
@@ -185,56 +180,47 @@ const SignUp = () => {
   
     // 이메일 인증이 완료되었는지 확인
     if (!isEmailVerified) {
-      setSignUpErrorMessage("가입 실패! 이메일 인증을 먼저 완료하세요.");
       alert("가입 실패! 이메일 인증을 먼저 완료하세요.");
       return;
     }
 
     // 단순 예시: 유효성 검사 실패 시 에러 메시지 설정
     if (!userId) {
-      setSignUpErrorMessage("아이디를 입력하세요.");
       alert("가입 실패! 아이디를 입력하세요.");
       return;
     }
   
     if (!username) {
-      setSignUpErrorMessage("사용자명을 입력하세요.");
       alert("가입 실패! 사용자명을 입력하세요.");
       return;
     }
   
     if (!email) {
-      setSignUpErrorMessage("이메일을 입력하세요.");
       alert("가입 실패! 이메일을 입력하세요.");
       return;
     }
   
     if (!password) {
-      setSignUpErrorMessage("비밀번호를 입력하세요.");
       alert("가입 실패! 비밀번호를 입력하세요.");
       return;
     }
   
     if (!password_ck) {
-      setSignUpErrorMessage("비밀번호 확인을 입력하세요.");
       alert("가입 실패! 비밀번호 확인을 입력하세요.");
       return;
     }
   
     if (!isUserIdValid) {
-      setSignUpErrorMessage("아이디 중복 확인을 해주세요.");
       alert("가입 실패! 아이디 중복 확인을 해주세요.");
       return;
     }
   
     if (password !== password_ck) {
-      setSignUpErrorMessage("비밀번호가 일치하지 않습니다.");
       alert("가입 실패! 비밀번호가 일치하지 않습니다.");
       return;
     }
 
     if(!isVerificationCodeEntered) {
-      setSignUpErrorMessage("이메일 인증을 완료해주세요.");
       alert("가입 실패! 이메일 인증을 완료해주세요.");
       return;
     }
@@ -260,7 +246,6 @@ const SignUp = () => {
 
   const handleVerificationCodeSubmit = () => {
     
-    console.log(verificationCode)
     if (verificationCode === enteredVerificationCode) {
       setIsEmailVerified(true);
       alert("인증 확인!");

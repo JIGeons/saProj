@@ -305,13 +305,10 @@ const handleMouseLeave = (productId) => {
 };
 
 const ProductList = () => {
-  const params = useParams();
-  const user = params.id;
   const [products, setProducts] = useState([]);
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewStartDate, setReviewStartDate] = useState("");
@@ -346,6 +343,9 @@ const ProductList = () => {
     let sortedProducts = [...products];
 
     switch (type) {
+      case 'recent':
+        sortedProducts.sort((a, b) => b.recent_review_num - a.recent_review_num);
+        break;
       case 'highToLow':
         sortedProducts.sort((a, b) => b.price - a.price);
         break;
@@ -401,11 +401,9 @@ const ProductList = () => {
       setExcelDownload(prevState => [...prevState, productId]);
     }
 
-    console.log(excelDownload)
   };
 
   const handleReviewDownload = () => {
-    setIsLoading(true);
     
     try {
       const response = axios.post(`${url}/exceldownload/`, {
@@ -414,7 +412,8 @@ const ProductList = () => {
         download: excelDownload
       }, {
         responseType: 'arraybuffer', // 응답 형식을 blob으로 설정
-      }).then((response) => {
+      })
+      .then((response) => {
         // Blob 데이터를 파일로 만들어 다운로드
         const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const downloadLink = document.createElement('a');
@@ -422,11 +421,14 @@ const ProductList = () => {
         downloadLink.download = '드시모네_리뷰_데이터.xlsx';
         downloadLink.click();
         window.URL.revokeObjectURL(downloadLink.href);
+      })
+      .catch(error => {
+        alert("해당 상품의 리뷰가 존재 하지 않습니다.")
+        console.error('해당 상품의 리뷰가 존재하지 않습니다.')
       });
     } catch(error) {
       console.error('파일 다운로드 오류: ', error);
     } finally {
-      setIsLoading(false);
       // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
       console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
       // 모달과 날짜 범위 초기화
@@ -497,6 +499,7 @@ const ProductList = () => {
               엑셀 저장
             </ExcelButton>
             <SortContainer>
+              <SortItem onClick={() => handleSort('recent')} active={sortBy === 'recent_review_num'}>최신 리뷰 순</SortItem>
               <SortItem onClick={() => handleSort('lowToHigh')} active={sortBy === 'price'}>가격 낮은 순</SortItem>
               <SortItem onClick={() => handleSort('highToLow')} active={sortBy === 'price'}>가격 높은 순</SortItem>
               <SortItem onClick={() => handleSort('name')} active={sortBy === 'name'}>이름 순</SortItem>

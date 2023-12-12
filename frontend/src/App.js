@@ -6,7 +6,6 @@ import Product from './component/page/ProductList';
 import ProductDetail from './component/page/ProductDetail';
 import AdminPage from './component/page/AdminPage'
 import Header from "./component/page/Header";
-import MyComponent from "./component/page/MyComponent";
 function App() {
 
   return (
@@ -20,7 +19,6 @@ function App() {
               <Route path="posts/productlist/" element={<Product />} />
               <Route path="posts/productlist/productdetail/:id" element={<ProductDetail />} />
               <Route path="/adminPage" element={<AdminPage />} />
-              <Route path="mycomponent" element={<MyComponent />} />
             </Route>
           </Routes>
         </div>

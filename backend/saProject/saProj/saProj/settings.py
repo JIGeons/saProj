@@ -59,7 +59,7 @@ CELERY_TIMEZONE = 'Asia/Seoul'
 CELERY_BEAT_SCHEDULE = {
     'scrapping-task': {
         'task': 'saApp.tasks.scrapping_review',    # 작업은 saApp의 tasks.py에 scrapping_review()
-        'schedule': crontab()  # 30분 마다 실행
+        'schedule': crontab(minute=30)  # 30분 마다 실행
     }
 }
 

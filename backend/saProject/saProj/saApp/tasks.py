@@ -7,9 +7,15 @@ from celery import shared_task
 
 from .models import Review
 from .services.openAi import review_evaluation
+from .services.prdReviewCnt import reviewCount
 from .services.scrapping_service import scrapping
 
 @shared_task
 def scrapping_review():
-    review_evaluation()
+    #scrapping()
+    print("scrapping is done gpt question start~!!")
+    #review_evaluation()
+    print("GPT 질문 완료. 종합하겠습니다.")
+    reviewCount()
+    print("종합이 완료되었습니다. task 끝")
 

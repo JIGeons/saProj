@@ -10,8 +10,11 @@ pip install openai==0.28
 pip install django-cors-headers
 pip install djangorestframework
 pip install djangorestframework-simplejwt
+pip install pandas
+pip install excelwriter
+pip install xlsxwriter
 
-pip install celery[redis], django-celery-beat, django-celery-results, eventlet, mysqlclient, selenium, bs4, openai==0.28, django-cors-headers, djangorestframework, djangorestframework-simplejwt
+pip install celery[redis], django-celery-beat, django-celery-results, eventlet, mysqlclient, selenium, bs4, openai==0.28, django-cors-headers, djangorestframework, djangorestframework-simplejwt, pandas, excelwriter, xlsxwriter
 
 frontend install 목록
 npm install react-router-dom

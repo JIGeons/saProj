@@ -8,6 +8,9 @@ from datetime import datetime
 import time
 import json
 import re
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 
 from ..models import Product, Review
 
@@ -126,23 +129,28 @@ def scrapping():
 
     # list의 갯수 만큼 for문 반복
     for i in range(0, prd_length):
-
         # for prd in prd_list를 해봤지만 동적으로 크롤링 할 시 항상 같은 코드가 같은건 아닌거 같다! 그러므로 페이지가 돌아올때마다 list를 다시 찾고
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
 
         try:
-            # 이어서 다른 상품 검색
+            # 이어서 다음 상품 클릭
             prd_list[i].click()
         except:
+            time.sleep(0.5)
             # 화면에 클릭 요소가 나타나지 않아서 오류가 생기면 pagedown으로 요소가 보이게끔 한 후 click을 한다.
             action = ActionChains(driver)
             action.send_keys(Keys.PAGE_DOWN).perform()
             prd_list[i].click()
-
         # ----------- 상품의 리뷰 크롤링 코드----------------------
+
+        # 리뷰 버튼을 못찾는 상황이 발생 -> webdriverWait으로 리뷰 버튼을 찾을 때 까지 대기
+        WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'goodsInfo-btn-review'))
+        )
 
         # 리뷰 버튼 클릭
         review_btn = driver.find_element(By.CLASS_NAME, 'goodsInfo-btn-review')
+        review_cnt = int(re.findall(r'\d+', review_btn.find_element(By.TAG_NAME, 'span').text)[0])
         review_btn.click()
 
         # 이전 리뷰번호 0으로 초기화
@@ -169,6 +177,7 @@ def scrapping():
                 prd_id = data.get("prd_id")
                 prd_name = data.get("prd_name")
                 recent_review_num = data.get("recent_review_num")
+                print(f"{prd_name} 상품 스크래핑 중....")
 
             # 리스트의 길이 확인
             board_len = len(board_info)
@@ -178,8 +187,10 @@ def scrapping():
                 continue
 
             # 리뷰가 없는 경우는 바로 break (div class 명이 ~~ empty일 경우)
-            if board_info[0].find('div').get('class') == 'board-list-wrap empty':
-                print("리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
+
+            if review_cnt == 0 and board_info[0].find('div').get('class')[1] == 'empty':
+                print(f"{prd_name} 상품은 리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
+
                 break
 
 
@@ -210,7 +221,7 @@ def scrapping():
 
             # 데이터베이스 가장 최근 리뷰번호와 페이지 리뷰의 번호가 같으면 최신 리뷰가 없는 것이므로 break(다음 product로 넘어감)
             if recent_review_num == current_review_num:
-                print("최신 리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
+                print(f"{prd_name} 상품의 최신 리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
                 break
 
             # 0번째는 header, 마지막 index는 '리뷰가 없습니다' 이므로 1번째부터 last_index-1까지 for문 반복
@@ -258,7 +269,7 @@ def scrapping():
             try:
                 # board-paging에서 ul을 찾아서 리스트로 만들고 ul리스트 마지막 li태그의 class가 on이 되면 마지막 페이지므로 break
                 if(ul_list[len(ul_list)-1].find('li').get('class')[0] == 'on'):
-                    print(f'{prd_id} 스크래핑 끝!')
+                    print(f'{prd_name} 상품 스크래핑 끝!')
                     break
             except:
                 # selenium으로 버튼을 찾아 클릭하게 되면 화면에 버튼이 나와야지만 클릭을 할 수 있기 때문에 JavaScript를 사용하여 해당 버튼을 찾고 클릭함

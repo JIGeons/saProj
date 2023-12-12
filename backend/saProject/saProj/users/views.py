@@ -174,7 +174,6 @@ class getUsersView(APIView):
         print(users.count())
         return Response(response_data, status=200)
 
-
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class UserUpdate(APIView):
@@ -184,7 +183,7 @@ class UserUpdate(APIView):
         currentPage = request.data.get('page')
         state = request.data.get('state')
         update = request.data.get('update')
-        status = False  # 가입 승인, 거절 메일을 보내기 위한 변수 true는 status가 변경 된것이므로 메일을 전송한다.
+        status = False      # 가입 승인, 거절 메일을 보내기 위한 변수 true는 status가 변경 된것이므로 메일을 전송한다.
 
         for updateUser in update:
             try:
@@ -228,7 +227,6 @@ class UserUpdate(APIView):
 
         return Response(response_data, status=200)
 
-
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 class getUserData(APIView):
@@ -236,7 +234,6 @@ class getUserData(APIView):
         user = UserSerializer(request.user)
 
         return Response({'user': user.data}, status=200)
-
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -246,4 +243,3 @@ class LogoutView(APIView):
 
         return Response({'success': 'logout complete'}, status=200)
 
-# Create your views here.

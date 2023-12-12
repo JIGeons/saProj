@@ -60,6 +60,14 @@ const Header = () => {
             prd_name = `${user.name}님의 관계자 페이지`;
           }
 
+          else if(location.pathname.startsWith("/posts/productlist/productdetail/")){
+            const prd_id = location.pathname.split('/').pop();
+            await axios.post(`http://localhost:8000/posts/prdId/?prdId=${prd_id}`)
+            .then((response) => {
+              prd_name = response.data.prdName
+            })
+          }
+
           setLogoText(prd_name || "SA Project");
         } catch (error) {
           console.error("에러 발생 : ", error);

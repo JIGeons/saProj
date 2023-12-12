@@ -11,17 +11,12 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomPaginationContainer from '../ui/CustompagContainer';
 import CustomPaginationStyled from '../ui/CustomPagination';
-
+import {format} from 'date-fns';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-`;
-const LoadingContainer = styled.div`
-  margin: auto;
-  font-size: 20px;
-  font-weight: bold;
 `;
 const ProductInfoContainer = styled.div`
   display: flex;
@@ -73,6 +68,21 @@ const ReviewsButton = styled.button`
   margin: auto;
   margin-right: 3%;
 `;
+
+const ModifyButton = styled.button`
+  background-color: ${({ isSave }) => (isSave ? '#ca3819' : '#007bff')};
+  margin-top: 10px;
+  width: 80px;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: auto;
+  margin-right: 3%;
+`;
+
 const PieChart = styled.div`
   margin-top: 20px;
   text-align: left;
@@ -104,35 +114,71 @@ const ReviewContainer = styled.div`
     th {
       background-color: #f2f2f2;
     }
-
-    .review-num {
-      width: 4%;
-    }
-
     .title {
       width: 17%;
     }
-
     .content {
       width: 30%;
     }
-
     .name {
       width: 5%;
     }
-
-    .count {
-      width: 5%;
-    }
-
     .good-bad {
       width: 5%;
     }
-
     .date {
       width: 13%;
     }
   }
+`;
+
+const ReviewHeader =styled.div`
+  width: 100%;
+  display: flex;
+  height: 50px;
+  justify-content: space-between;
+`
+
+const SearchFilter = styled.div`
+  display: flex;
+  padding: 10px;
+`
+
+const Wave = styled.div`
+  margin-left: 5px;
+  margin-right: 5px;
+`
+
+const ExcelButton = styled.button`
+  width: 80px;
+  height: 35px;
+  background-color: #28a745; /* Green background color */
+  color: #fff; /* White text color */
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+`;
+
+const CalenderContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const DateInput = styled.input`
+  width: 100%;
+  padding: 2px;
+  box-sizing: border-box;
+`;
+
+const ModifyContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const ProductDetail = () => {
@@ -144,23 +190,23 @@ const ProductDetail = () => {
 
   //const [showreviews, setShowreviews] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState(null); // 긍정, 부정 선택해서 리뷰 보기 위함
-  const [loading, setLoading] = useState(true);
-  const [modify, setModify] = useState("normal");
-
-  /* 차트 구성에 필요한 부분 */
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [modify, setModify] = useState("normal")
 
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState("");
   const [effect, setEffect]= useState("False");
 
+  const [search, setSearch] = useState(false);
+
   /* 추가한 부분 */
   const [selectedReviews, setSelectedReviews] = useState([]);
 
   /* datepicker 추가 부분 */
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const onChange = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -171,6 +217,7 @@ const ProductDetail = () => {
 
   /* 추가한 부분 */
   const handleCheckboxChange = (reviewId) => {
+    console.log(selectedReviews)
     setSelectedReviews((prevSelectedReviews) => {
       if (prevSelectedReviews.includes(reviewId)) {
         return prevSelectedReviews.filter((id) => id !== reviewId);
@@ -221,7 +268,7 @@ const ProductDetail = () => {
       if (selectedReviews.length > 0) {
         try {
           const response = await axios.post(
-            "http://localhost:8000/posts/product_detail/edit_reviews",
+            "http://localhost:8000/posts/product_detail/edit_reviews/",
             {
               selectedReviews: selectedReviews,
               productId: productId,
@@ -232,6 +279,7 @@ const ProductDetail = () => {
           console.error('Error', error.message);
         }
         setSelectedReviews([]);
+        setModify('normal');
       } else {
         alert("수정할 리뷰를 선택해주세요.");
       }
@@ -243,7 +291,9 @@ const ProductDetail = () => {
 
   const loadpage = async () => {
     await axios
-      .get(`${url}/?prdid=${productId}`)
+      .get(`${url}/?prdid=${productId}`,{
+        headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+      })
       .then((response) => {
         const totalCount = response.data.total;
         const good = response.data.good;
@@ -251,17 +301,14 @@ const ProductDetail = () => {
 
         setProduct(response.data.product);
         setReviews(response.data.review_page);
-        setLoading(false);
         setTotal(Number(totalCount));
 
         createChart(totalCount, good, bad);
       })
       .catch((error) => {
         console.error("데이터를 가져오는 중 오류 발생: ", error);
-        setLoading(false);
       })
       .finally(() => {
-        setLoading(false);
         setEffect(true);
       });
   };
@@ -270,7 +317,7 @@ const ProductDetail = () => {
     if(effect){
       paging();
     }
-  }, [state, currentPage])
+  }, [state, currentPage, modify])
 
   const paging = async () => {
     try {
@@ -279,6 +326,26 @@ const ProductDetail = () => {
       .then((response) => {
         setTotal(Number(response.data.total));
         setReviews(response.data.reviews);
+      })
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
+  const datePaging = async () => {
+    try {
+      console.log('이펙트'+currentPage);
+      await axios.post(`${url}/datePaging/`,{
+        start: startDate,
+        end: endDate,
+        prdid: productId,
+        page: currentPage,
+        state: state
+      })
+      .then((response) => {
+        setTotal(Number(response.data.total));
+        setReviews(response.data.reviews);
+        setSearch(false);
       })
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -295,11 +362,39 @@ const ProductDetail = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  
-  const handleDateFilter = async () => {
-    changeState('')
+
+  const handleDateFilter = () => {
+    setSearch(true);
+    datePaging();
   };
-//////////////////////////////////////////////////////////////
+
+  const handleReviewDownload = () => {
+    try {
+      const response = axios.post(`http://localhost:8000/posts/exceldownload/`, {
+        start: startDate,
+        end: endDate,
+        download: [productId]
+      }, {
+        responseType: 'arraybuffer', // 응답 형식을 blob으로 설정
+      }).then((response) => {
+        // Blob 데이터를 파일로 만들어 다운로드
+        const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = '드시모네_리뷰_데이터.xlsx';
+        downloadLink.click();
+        window.URL.revokeObjectURL(downloadLink.href);
+      });
+    } catch(error) {
+      console.error('파일 다운로드 오류: ', error);
+    } finally {
+      // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
+      console.log("선택한 날짜 범위에서 리뷰 다운로드 중", startDate, "부터", endDate, "까지");
+      // 모달과 날짜 범위 초기화
+      setStartDate("");
+      setEndDate("");
+    }
+  };
 
   return (
     <Container>
@@ -319,7 +414,7 @@ const ProductDetail = () => {
           </div>
           
           <p>{startDate.toDateString} ~ {endDate.toDateString} 까지의 리뷰 내용</p>
-          <PieChart style={{ width: "70%", display: "flex" }}>
+          <PieChart style={{ width: "100%", display: "flex" }}>
             <canvas
               ref={chartRef}
               width={300}
@@ -331,32 +426,46 @@ const ProductDetail = () => {
         </ProductDetails>
       </ProductInfoContainer>
       <ReviewContainer>
-        <div>
-          <>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-            />
-          </>
-          <input type='button' value={'조회'} onClick={handleDateFilter} />
-          </div>
-        <h1 style={{fontWeight: "bold"}}>리뷰 내용</h1>
-        <button onClick={() => handleEditButtonClick()}>수정</button>
-        {modify === "normal" &&
+        <h1>리뷰 내용</h1>
+        <ReviewHeader>
+          <SearchFilter>
+            <>
+            <CalenderContainer>
+              <DateInput
+                type="date"
+                value={startDate}
+                onChange={(e) => {setStartDate(e.target.value); console.log(startDate)}}
+                placeholder="시작 날짜"
+              />
+            </CalenderContainer>
+            <Wave>~</Wave>
+            <CalenderContainer>
+              <DateInput
+                type="date"
+                value={endDate}
+                onChange={(e) => {setEndDate(e.target.value); console.log(endDate);}}
+                placeholder="종료 날짜"
+              />
+            </CalenderContainer>
+              <Wave>
+                <input type='button' value={'조회'} onClick={() => handleDateFilter()} />
+              </Wave>
+              <Wave>
+                <ExcelButton onClick={() => {handleReviewDownload()}}>엑셀 저장</ExcelButton>
+              </Wave>
+            </>
+          </SearchFilter>
+          <ModifyContainer></ModifyContainer>
+          <ModifyContainer>
+            <ModifyButton isSave={modify !== 'normal'} onClick={() => handleEditButtonClick()}> {modify === 'normal' ? '수정' : '저장'} </ModifyButton>
+          </ModifyContainer>
+        </ReviewHeader>
+        
+        {  modify === "normal" &&
           <table>
             <thead>
               <tr>
+                <th className='review-num'>리뷰 번호</th>
                 <th className='title'>제목</th>
                 <th className='content'>내용</th>
                 <th className='name'>이름</th>
@@ -367,11 +476,12 @@ const ProductDetail = () => {
             <tbody>
               {reviews.map((review) => (
                 <tr key={`${state}-${review.id}`}>
+                  <td>{review.review_num}</td>
                   <td>{review.title}</td>
                   <td style={{ width: "50%" }}>{review.content}</td>
                   <td>{review.user_name}</td>
                   <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
-                    {review.good_or_bad == 1 ? '긍정' : '부정'}
+                    {review.good_or_bad === '1' ? '긍정' : '부정'}
                   </td>
                   <td>{review.date}</td>
                 </tr>
@@ -379,27 +489,28 @@ const ProductDetail = () => {
             </tbody>
           </table>
         }
-        {
-          modify === "modify" &&
+        {  modify === "modify" &&
           <table>
             <thead>
               <tr>
+                <th className='review-num'>리뷰 번호</th>
                 <th className='title'>제목</th>
                 <th className='content'>내용</th>
                 <th className='name'>이름</th>
                 <th className="good-bad">긍·부정</th>
                 <th className="date">날짜</th>
-                <th>수정</th>
+                <th className='modify'>수정</th>
               </tr>
             </thead>
             <tbody>
               {reviews.map((review) => (
                 <tr key={`${state}-${review.id}`}>
+                  <td>{review.review_num}</td>
                   <td>{review.title}</td>
                   <td style={{ width: "50%" }}>{review.content}</td>
                   <td>{review.user_name}</td>
                   <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
-                    {review.good_or_bad == 1 ? '긍정' : '부정'}
+                    {review.good_or_bad === '1' ? '긍정' : '부정'}
                   </td>
                   <td>{review.date}</td>
                   <td>

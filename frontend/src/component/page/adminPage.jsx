@@ -95,7 +95,7 @@ const AdminPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [count, setCount] = useState(0)
 
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([{userid : "", status: ""}]);
 
   const params = useParams();
   const userid = params.id;
@@ -212,7 +212,7 @@ const AdminPage = () => {
                   <Checkbox
                     type="checkbox"
                     name={`user-${index}`}
-                    checked={selectedRows.filter(users => users.userid === user.userid).status === 1 ? true : false}
+                    checked={selectedRows.some(users => users.userId === user.userid && users.status === 1)}
                     onChange={() => updateUserStatus(user.userid, user.status + 1)}
                   />
                 </Td>
@@ -220,7 +220,7 @@ const AdminPage = () => {
                   <Checkbox
                     type="checkbox"
                     name={`user-${index}`}
-                    checked={selectedRows.filter(users => users.userid === user.userid).status === 2 ? true : false}
+                    checked={selectedRows.some(users => users.userId === user.userid && users.status === 2)}
                     onChange={() => updateUserStatus(user.userid, user.status + 2)}
                   />
                 </Td>

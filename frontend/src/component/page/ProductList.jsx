@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -204,12 +204,21 @@ const ColumnFlexContainer = styled.div`
 `;
 
 const CheckboxContainer = styled.div`
-  height: 100%;
+  width: 20%;
+  height: 200%;
   display: flex;
   flex-direction: column;
   margin-left: 10px;
   text-align: left;
-  border: 1px solid black;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  padding-bottom: 10px;
+`;
+
+const PeriodDiv = styled.div`
+  margin-left: 10px;
+  text-align: left;
+  margin-top: 10px;
 `;
 
 const ReviewProduct = styled.div`
@@ -296,10 +305,13 @@ const handleMouseLeave = (productId) => {
 };
 
 const ProductList = () => {
+  const params = useParams();
+  const user = params.id;
   const [products, setProducts] = useState([]);
   const [sortBy, setSortBy] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewStartDate, setReviewStartDate] = useState("");
@@ -310,10 +322,18 @@ const ProductList = () => {
 
   const [excelDownload, setExcelDownload] = useState([]);
 
+  const [week, setWeek] = useState(false);
+  const [month, setMonth] = useState(false);
+  const [year, setYear] = useState(false);
+
+  const url = 'http://localhost:8000/posts'
+
   useEffect(() => {
-    axios.get('http://localhost:8000/posts/product_list/')
+    axios.get(`${url}/product_list/`,{
+      headers: {'Authorization': `Token ${localStorage.getItem('authToken')}`}
+    })
       .then(response => {
-        setProducts(response.data);
+        setProducts(response.data.products);
         setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
       })
       .catch(error => {
@@ -336,7 +356,7 @@ const ProductList = () => {
         sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'reviews':
-        sortedProducts.sort((a, b) => b.review_count  - a.review_count );
+        sortedProducts.sort((a, b) => b.count  - a.count );
         break;
       default:
         break;
@@ -357,6 +377,13 @@ const ProductList = () => {
   const handleDownloadAllChange = () => {
     setDownloadAll(!downloadAll);
     setDownloadSelected(false);
+
+    if(!downloadAll === true) {
+      products.map(product => (
+        setExcelDownload(items => [...items, product.id])
+      ))
+    }
+    
   };
 
   const handleDownloadSelectedChange = () => {
@@ -378,13 +405,84 @@ const ProductList = () => {
   };
 
   const handleReviewDownload = () => {
-    // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
-    console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
-    // 모달과 날짜 범위 초기화
-    setShowReviewModal(false);
-    setReviewStartDate("");
-    setReviewEndDate("");
-    setExcelDownload([]);
+    setIsLoading(true);
+    
+    try {
+      const response = axios.post(`${url}/exceldownload/`, {
+        start: reviewStartDate,
+        end: reviewEndDate,
+        download: excelDownload
+      }, {
+        responseType: 'arraybuffer', // 응답 형식을 blob으로 설정
+      }).then((response) => {
+        // Blob 데이터를 파일로 만들어 다운로드
+        const blob = new Blob([response.data],  { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(blob);
+        downloadLink.download = '드시모네_리뷰_데이터.xlsx';
+        downloadLink.click();
+        window.URL.revokeObjectURL(downloadLink.href);
+      });
+    } catch(error) {
+      console.error('파일 다운로드 오류: ', error);
+    } finally {
+      setIsLoading(false);
+      // 선택한 날짜 범위에 따라 리뷰 다운로드를 위한 로직을 구현하세요.
+      console.log("선택한 날짜 범위에서 리뷰 다운로드 중", reviewStartDate, "부터", reviewEndDate, "까지");
+      // 모달과 날짜 범위 초기화
+      setShowReviewModal(false);
+      setReviewStartDate("");
+      setReviewEndDate("");
+      setExcelDownload([]);
+      setDownloadAll(false);
+      setDownloadSelected(false);
+      setWeek(false);
+      setMonth(false);
+      setYear(false);
+    }
+  };
+
+  const handleCheckboxChange = (e, date) => {
+    const isChecked = e.target.checked;
+    let startDate;
+
+    if (date === 'week') {
+      setWeek(!week)
+        // week를 제외한 나머지 체크박스 false
+        setMonth(false)
+        setYear(false)
+    } else if(date === 'month') {
+      // month를 제외한 나머지 체크박스 false
+      setWeek(false)
+      setMonth(!month)
+      setYear(false)
+    } else if(date === 'year') {
+        // year를 제외한 나머지 체크박스 false
+        setWeek(false)
+        setMonth(false)
+        setYear(!year)
+    }
+
+    if (isChecked) {
+      if (date === 'week'){
+        startDate = new Date();
+        startDate.setDate(startDate.getDate() - 6);
+      } else if (date === 'month'){
+        startDate = new Date();
+        startDate.setMonth(startDate.getMonth() - 1);
+        startDate.setDate(startDate.getDate() + 1);
+      } else if (date === 'year'){
+        startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        startDate.setDate(startDate.getDate() + 1);
+      }
+
+      setReviewStartDate(startDate.toISOString().split('T')[0]);
+      setReviewEndDate(new Date().toISOString().split('T')[0]);
+    } else {
+      setReviewStartDate('');
+      setReviewEndDate('');
+    }
   };
 
   return (
@@ -408,15 +506,15 @@ const ProductList = () => {
           <ProductContainer>
             {products.map(product => (
                 <Product key={product.id}>
-                    <Link to={`productdetail/${product.id}`} style={{ textDecoration: 'none', color: 'black' }}>
+                    <Link to={`/posts/productlist/productdetail/${product.id}`} style={{ textDecoration: 'none', color: 'black' }}>
                         <ProductImage src={product.src} alt={product.name} />
                         
                         <div id={`additionalInfo${product.id}`} style={styles.additionalInfo}>
                           {/* Display additional information here */}
                           <p>** 리뷰 분석 **</p>
-                          <p>총 리뷰 개수 : {product.review_count}</p>
-                          <p>긍정 리뷰 개수 : {product.review_good}</p>
-                          <p>부정 리뷰 개수 : {product.review_bad}</p>
+                          <p>총 리뷰 개수 : {product.count}</p>
+                          <p>긍정 리뷰 개수 : {product.good}</p>
+                          <p>부정 리뷰 개수 : {product.bad}</p>
                         </div>
                         <div
                           style={styles.productHover}
@@ -461,24 +559,30 @@ const ProductList = () => {
                   </ReviewModalInputContainer>
                   </ColumnFlexContainer>
                   <CheckboxContainer>
-                    <div>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={week}
+                        onChange={(e) => handleCheckboxChange(e, 'week')}
                       />
-                      <label>일주일</label>
-                    </div>
-                    <div>
+                      <label style={{marginLeft: '5px'}}>일주일</label>
+                    </PeriodDiv>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={month}
+                        onChange={(e) => handleCheckboxChange(e, 'month')}
                       />
-                      <label>한달</label>
-                    </div>
-                    <div>
+                      <label style={{marginLeft: '5px'}}>한달</label>
+                    </PeriodDiv>
+                    <PeriodDiv>
                       <input
                         type="checkbox"
+                        checked={year}
+                        onChange={(e) => handleCheckboxChange(e, 'year')}
                       />
-                      <label>일년</label>
-                    </div>
+                      <label style={{marginLeft: '5px'}}>일년</label>
+                    </PeriodDiv>
                   </CheckboxContainer>
               </FlexContainer>
               <p style={{ color: 'blue' }}>※ 시작 날짜를 선택 안하면 전체 기간의 리뷰가 다운로드됩니다.</p>
@@ -487,7 +591,7 @@ const ProductList = () => {
                   type="checkbox"
                   id="downloadAll"
                   checked={downloadAll}
-                  onChange={handleDownloadAllChange}
+                  onChange={() => handleDownloadAllChange()}
                 />
                 <label htmlFor="downloadAll">전체 상품 다운로드</label>
               </DownloadOptionsContainer>
@@ -516,7 +620,7 @@ const ProductList = () => {
                   </ReviewProductContainer>
                 )}
               </DownloadOptionsContainer>
-              <ReviewModalButton onClick={handleReviewDownload}>
+              <ReviewModalButton onClick={() => {handleReviewDownload()}}>
                 다운로드
               </ReviewModalButton>
               <ReviewModalButton onClick={() => {setShowReviewModal(false); setExcelDownload([]);}}>

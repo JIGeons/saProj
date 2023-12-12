@@ -217,8 +217,9 @@ def scrapping():
                 # 현재 페이지의 리뷰 번호를 가지고 온다
                 current_review_num = int(re.findall(r'\d+', board_info[0].get('id'))[0])
 
+
             # 데이터베이스 가장 최근 리뷰번호와 페이지 리뷰의 번호가 같으면 최신 리뷰가 없는 것이므로 break(다음 product로 넘어감)
-            if recent_review_num == current_review_num:
+            if recent_review_num >= current_review_num:
                 print(f"{prd_name} 상품의 최신 리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
                 break
 

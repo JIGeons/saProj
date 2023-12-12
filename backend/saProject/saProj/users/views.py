@@ -1,25 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage
-from django.utils.decorators import method_decorator
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from django.shortcuts import render, redirect
 from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics, permissions
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 
-from .decorators import account_ownership_required
 from .models import User
 from .serializer import UserSerializer
 from rest_framework.authtoken.models import Token
-from django.utils import timezone
 
 def sendEmail(function, email, name):
     from_email = 'rlrjtlrl2@naver.com'  # 보내는 이메일 주소
@@ -30,7 +23,7 @@ def sendEmail(function, email, name):
         subject = '회원가입 인증코드'
         message = f'{name}님의 회원가입을 위한 인증코드는 다음과 같습니다. {verification_code}'
 
-        send_mail(subject, message, from_email, to_email, fail_silently=False)
+        #send_mail(subject, message, from_email, to_email, fail_silently=False)
 
         return verification_code
     elif function == 'userUpdateApprove':
@@ -44,7 +37,6 @@ def sendEmail(function, email, name):
 
 class LoginView(APIView):
     def post(self, request):
-        print("전송")
         userid = request.data.get('userId')
         password = request.data.get('password')
         
@@ -52,9 +44,8 @@ class LoginView(APIView):
             user = authenticate(request, userid=userid, password=password)
         except:
             print("사용자 없음")
+            return Response({'message': "해당 사용자가 없습니다."})
 
-        print(f"userid: {userid} password: {password}")
-        print(user)
 
         if user is not None:
             # 승인완료 상태
@@ -141,7 +132,6 @@ class findIdView(APIView):
 class getUsersView(APIView):
     def post(self, request):
         user = request.user
-        print(user)
         currentPage = self.request.data.get('page')
         state = self.request.data.get('state')
 
@@ -165,7 +155,6 @@ class getUsersView(APIView):
             'total': users.count(),
         }
 
-        print(users.count())
         return Response(response_data, status=200)
 
 @authentication_classes([TokenAuthentication])
@@ -191,10 +180,10 @@ class UserUpdate(APIView):
                 user_update.save()
 
                 # status가 변경이 되었을때만 메일 전송
-                if status and user_update.status == 1:
-                    sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
-                elif status and user_update.status == 2:
-                    sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
+                #if status and user_update.status == 1:
+                    #sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
+                #elif status and user_update.status == 2:
+                    #sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
             except Exception as e:
                 print(f"error : {e}")
                 return Response({"message": "user status update failed"}, status=400)
@@ -215,7 +204,7 @@ class UserUpdate(APIView):
 
         response_data = {
             'users': list(users_page),
-            'admin': userid,
+            'admin': request.user.name,
             'total': users.count(),
         }
 

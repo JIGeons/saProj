@@ -59,7 +59,7 @@ CELERY_TIMEZONE = 'Asia/Seoul'
 CELERY_BEAT_SCHEDULE = {
     'scrapping-task': {
         'task': 'saApp.tasks.scrapping_review',    # 작업은 saApp의 tasks.py에 scrapping_review()
-        'schedule': crontab()  # 30분 마다 실행
+        'schedule': crontab()  # 6의 배수 시간 대 마다 실행
     }
 }
 
@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'corsheaders',
+    'drf_yasg',
 ]
 
 # REST_FRAMEWORK SETTINGS

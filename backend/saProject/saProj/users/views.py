@@ -23,7 +23,7 @@ def sendEmail(function, email, name):
         subject = '회원가입 인증코드'
         message = f'{name}님의 회원가입을 위한 인증코드는 다음과 같습니다. {verification_code}'
 
-        #send_mail(subject, message, from_email, to_email, fail_silently=False)
+        send_mail(subject, message, from_email, to_email, fail_silently=False)
 
         return verification_code
     elif function == 'userUpdateApprove':
@@ -74,7 +74,7 @@ class LoginView(APIView):
                     "message": "승인 거절 상태 입니다. 관리자에게 문의하세요."
                 })
         else:
-            return Response({'message': "Invalid credentials"})
+            return Response({'message': "없는 사용자 입니다."})
 
 class SignUpView(APIView):
     def post(self, request):
@@ -82,7 +82,6 @@ class SignUpView(APIView):
         password = request.data.get('password')
         name = request.data.get('name')
         email = request.data.get('email')
-        print(userid, password, name, email)
 
         try:
             user_create = UserSerializer().create({
@@ -104,7 +103,7 @@ class SendEmailView(APIView):
         name = request.data.get('name')
 
         if name == '':
-            return JsonResponse({'success':False, 'error': '이름이 적혀있지 않습니다'}, status=400)
+            return JsonResponse({'success': False, 'error': '이름이 적혀있지 않습니다'}, status=400)
         try:
             print("이메일 : ", email)
             # 이미 가입된 이메일인지 확인
@@ -114,7 +113,7 @@ class SendEmailView(APIView):
             # 가입되지 않은 이메일일 경우 인증 코드 생성 및 전송
             verification_code = sendEmail(function='signUp', email=email, name=name)
 
-            return JsonResponse({'success': True, 'verification_code': verification_code})
+            return JsonResponse({'success': True, 'verification_code': verification_code}, status=200)
 
 class findIdView(APIView):
     def post(self, request):
@@ -162,7 +161,6 @@ class getUsersView(APIView):
 class UserUpdate(APIView):
     def post(self, request):
         userid = request.user.userid
-
         currentPage = request.data.get('page')
         state = request.data.get('state')
         update = request.data.get('update')
@@ -180,10 +178,10 @@ class UserUpdate(APIView):
                 user_update.save()
 
                 # status가 변경이 되었을때만 메일 전송
-                #if status and user_update.status == 1:
-                    #sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
-                #elif status and user_update.status == 2:
-                    #sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
+                if status and user_update.status == 1:
+                    sendEmail(function='userUpdateApprove', email=user_update.email, name=user_update.name)
+                elif status and user_update.status == 2:
+                    sendEmail(function='userUpdateReject', email=user_update.email, name=user_update.name)
             except Exception as e:
                 print(f"error : {e}")
                 return Response({"message": "user status update failed"}, status=400)
@@ -222,6 +220,11 @@ class getUserData(APIView):
 @permission_classes([IsAuthenticated])
 class LogoutView(APIView):
     def get(self, request):
+        # 로그인 하면서 생성된 토큰 삭제
+        token, created = Token.objects.get_or_create(user=request.user)
+        token.delete()
+        
+        # 로그아웃
         logout(request)
 
         return Response({'success': 'logout complete'}, status=200)

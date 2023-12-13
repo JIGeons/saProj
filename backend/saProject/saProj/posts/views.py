@@ -25,7 +25,7 @@ def excel_download(reviews, start, end):
     # review_data의 내용이 없으면 리뷰 없음을 return
     if review_data.count() == 0:
         # http 메서드 요청 거절 - 405
-        return Response({"success":"failed", "message":"해당 상품의 리뷰가 없습니다."}, status=405)
+        return Response({"success": "failed", "message": "해당 상품의 리뷰가 없습니다."}, status=405)
 
     # 리뷰 데이터 가져오기
     if start == '':

@@ -389,8 +389,12 @@ const ProductDetail = () => {
           </ProductPrice>
           <div>
             <ReviewsButton onClick={() => {setSearch(false); changeState('all');}}> 전체 <br /> {product.count === 0 ? '' : product.count} </ReviewsButton>
-            <ReviewsButton onClick={() => {setSearch(false); changeState('good');}}> 긍정{product.count === 0 ? '' : ' : ' + parseInt(product.good / product.count * 100)+'%'}<br /> {product.count === 0 ? '' : product.good} </ReviewsButton>
-            <ReviewsButton onClick={() => {setSearch(false); changeState('bad');}}> 부정{product.count === 0 ? '' : ' : ' + parseInt(product.bad / product.count * 100) + '%'}<br /> {product.count === 0 ? '' : product.bad} </ReviewsButton>
+            <ReviewsButton onClick={() => {setSearch(false); changeState('good');}}> 
+              긍정{product.count === 0 ? '' : ' : ' + parseInt(product.good / product.count * 100)+'%'}<br /> {product.count === 0 ? '' : product.good} 
+            </ReviewsButton>
+            <ReviewsButton onClick={() => {setSearch(false); changeState('bad');}}> 
+              부정{product.count === 0 ? '' : ' : ' + parseInt(product.bad / product.count * 100) + '%'}<br /> {product.count === 0 ? '' : product.bad} 
+            </ReviewsButton>
           </div>
 
           <PieChart style={{ width: "100%", display: "flex" }}>

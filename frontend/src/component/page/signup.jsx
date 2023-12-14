@@ -154,7 +154,7 @@ const SignUp = () => {
   };
 
   const checkPasswordMatch = () => {
-    if (password_ck && password !== password_ck) {
+    if (password !== password_ck) {
       setPasswordMatchMessage("비밀번호가 일치하지 않습니다.");
     } else {
       setPasswordMatchMessage("");

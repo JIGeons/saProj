@@ -44,7 +44,7 @@ class LoginView(APIView):
             user = authenticate(request, userid=userid, password=password)
         except:
             print("사용자 없음")
-            return Response({'message': "해당 사용자가 없습니다."})
+            return Response({'message': "없는 사용자 입니다."})
 
 
         if user is not None:

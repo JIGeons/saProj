@@ -58,10 +58,20 @@ const ReviewsButton = styled.button`
   width: 30%;
   background-color: #007bff;
   color: #fff;
-  padding: 10px;
+  padding: 5px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  margin: auto;
+  margin-right: 3%;
+`;
+
+const ReviewsCount = styled.div`
+  margin-top: 10px;
+  width: 30%;
+  padding: 10px;
+  border: none;
   font-size: 16px;
   margin: auto;
   margin-right: 3%;
@@ -199,7 +209,7 @@ const ProductDetail = () => {
   /* 추가한 부분 */
   const [selectedReviews, setSelectedReviews] = useState([]);
 
-  /* datepicker 추가 부분 */
+  /* DateInput 추가 부분 */
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -378,15 +388,11 @@ const ProductDetail = () => {
             {Number(product.price).toLocaleString()}원
           </ProductPrice>
           <div>
-            <ReviewsButton onClick={() => {setSearch(false); changeState('all');}}> 전체 </ReviewsButton>
-            <ReviewsButton onClick={() => {setSearch(false); changeState('good');}}> 긍정 </ReviewsButton>
-            <ReviewsButton onClick={() => {setSearch(false); changeState('bad');}}> 부정 </ReviewsButton>
+            <ReviewsButton onClick={() => {setSearch(false); changeState('all');}}> 전체 <br /> {product.count === 0 ? '' : product.count} </ReviewsButton>
+            <ReviewsButton onClick={() => {setSearch(false); changeState('good');}}> 긍정{product.count === 0 ? '' : ' : ' + parseInt(product.good / product.count * 100)+'%'}<br /> {product.count === 0 ? '' : product.good} </ReviewsButton>
+            <ReviewsButton onClick={() => {setSearch(false); changeState('bad');}}> 부정{product.count === 0 ? '' : ' : ' + parseInt(product.bad / product.count * 100) + '%'}<br /> {product.count === 0 ? '' : product.bad} </ReviewsButton>
           </div>
-          <div>
-            <div>{}</div>
-            <div></div>
-            <div></div>
-          </div>
+
           <PieChart style={{ width: "100%", display: "flex" }}>
             <canvas
               ref={chartRef}
@@ -453,8 +459,8 @@ const ProductDetail = () => {
                   <td>{review.title}</td>
                   <td style={{ width: "50%" }}>{review.content}</td>
                   <td>{review.user_name}</td>
-                  <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
-                    {review.good_or_bad === '1' ? '긍정' : '부정'}
+                  <td style={{ color: review.good_or_bad == 1 ? 'green' : review.good_or_bad === '0' ? 'red' : 'gray' }}>
+                    {review.good_or_bad === '1' ? '긍정' : review.good_or_bad === '0' ? '부정' : '분석 X'}
                   </td>
                   <td>{review.date}</td>
                 </tr>

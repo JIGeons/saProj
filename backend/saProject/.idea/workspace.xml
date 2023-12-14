@@ -5,12 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="29a45207-3c8a-43f6-a646-e7aa5b0cff8f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/saProj/error.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/openAi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saApp/tasks.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/tasks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/saProj/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/saving_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saving_log.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +64,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -92,7 +99,9 @@
       <workItem from="1702059619842" duration="194000" />
       <workItem from="1702093344623" duration="4551000" />
       <workItem from="1702222338911" duration="7540000" />
-      <workItem from="1702443901213" duration="1949000" />
+      <workItem from="1702443901213" duration="2607000" />
+      <workItem from="1702516702066" duration="4035000" />
+      <workItem from="1702520824875" duration="18184000" />
     </task>
     <servers />
   </component>

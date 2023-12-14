@@ -1,16 +1,16 @@
-from django.db.models import Max
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
-from bs4 import BeautifulSoup
-from datetime import datetime
-import time
 import json
 import re
+import time
+from datetime import datetime
 
-from selenium.webdriver.support.wait import WebDriverWait
+from bs4 import BeautifulSoup
+from django.db.models import Max
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 from ..models import Product, Review
 
@@ -131,7 +131,6 @@ def scrapping():
     for i in range(0, prd_length):
         # for prd in prd_list를 해봤지만 동적으로 크롤링 할 시 항상 같은 코드가 같은건 아닌거 같다! 그러므로 페이지가 돌아올때마다 list를 다시 찾고
         prd_list = driver.find_elements(By.CSS_SELECTOR, f'div.category-list > ul > li')
-        time.sleep(0.3)
 
         try:
             # 이어서 다음 상품 클릭
@@ -140,6 +139,7 @@ def scrapping():
             # 화면에 클릭 요소가 나타나지 않아서 오류가 생기면 pagedown으로 요소가 보이게끔 한 후 click을 한다.
             action = ActionChains(driver)
             action.send_keys(Keys.PAGE_DOWN).perform()
+            time.sleep(0.3)
             prd_list[i].click()
         # ----------- 상품의 리뷰 크롤링 코드----------------------
 
@@ -219,7 +219,7 @@ def scrapping():
 
 
             # 데이터베이스 가장 최근 리뷰번호와 페이지 리뷰의 번호가 같으면 최신 리뷰가 없는 것이므로 break(다음 product로 넘어감)
-            if recent_review_num >= current_review_num:
+            if recent_review_num is not None and recent_review_num >= current_review_num:
                 print(f"{prd_name} 상품의 최신 리뷰가 없습니다. 다음 상품으로 넘어갑니다.")
                 break
 
@@ -258,7 +258,7 @@ def scrapping():
             if escape: break
 
             # 리뷰가 10개가 안되는 경우(즉, 페이지가 하나 밖에 없을 경우 break 또는 마지막 페이지 일 경우)
-            if 1 < board_len and board_len < 11:
+            if 1 < board_len and board_len < 6:
                 print('끝')
                 break
 

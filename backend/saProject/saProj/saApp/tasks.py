@@ -19,3 +19,9 @@ def scrapping_review():
     reviewCount()
     print("종합이 완료되었습니다. task 끝")
 
+@shared_task
+def GPT_Question():
+    review_evaluation()
+    print("GPT 질문 완료. 종합하겠습니다.")
+    reviewCount()
+    print("종합이 완료되었습니다. task 끝")

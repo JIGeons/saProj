@@ -5,17 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="29a45207-3c8a-43f6-a646-e7aa5b0cff8f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/saProj/as.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.bak" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/celerybeat-schedule.dir" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saProj/posts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/posts/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saApp/services/scrapping_service.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/saProj/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/saProj/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/saProj/드시모네_리뷰_데이터.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/ProductDetail.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../frontend/src/component/page/adminPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../../frontend/src/component/page/adminPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +93,7 @@
       <workItem from="1702516702066" duration="4035000" />
       <workItem from="1702520824875" duration="21840000" />
       <workItem from="1702604093338" duration="6708000" />
-      <workItem from="1702620870879" duration="6088000" />
+      <workItem from="1702620870879" duration="7363000" />
     </task>
     <servers />
   </component>

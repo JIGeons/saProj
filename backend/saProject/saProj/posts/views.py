@@ -280,6 +280,7 @@ class EditReviewGoodToBadView(APIView):
             update_reviews = Review.objects.filter(prd_id=prd_id)
 
             update_product = Product.objects.get(id=prd_id)
+            update_product.count = update_reviews.count()
             update_product.good = update_reviews.filter(good_or_bad='1').count()
             update_product.bad = update_reviews.filter(good_or_bad='0').count()
             update_product.save()

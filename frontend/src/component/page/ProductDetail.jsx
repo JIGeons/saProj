@@ -24,6 +24,7 @@ const ProductInfoContainer = styled.div`
 
 const ProductImageContainer = styled.div`
   margin-right: 20px;
+  height: 80%;
 `;
 
 const ProductImage = styled.img`
@@ -37,6 +38,8 @@ const ProductDetails = styled.div`
   display: flex;
   flex-direction: column;
   margin: auto;
+  height: 80%;
+  width: 350px;
 `;
 
 const ProductName = styled.h3`
@@ -94,6 +97,8 @@ const ModifyButton = styled.button`
 const PieChart = styled.div`
   margin-top: 20px;
   text-align: left;
+  width : 350px;
+  height : 350px;
 `
 
 const ReviewContainer = styled.div`
@@ -289,7 +294,7 @@ const ProductDetail = () => {
   };
   useEffect(() => {
     loadpage();
-  }, []);
+  }, [modify]);
 
   const loadpage = async () => {
     await axios
@@ -344,10 +349,6 @@ const ProductDetail = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-  };
-
-  const handleDateFilter = () => {
-    paging();
   };
 
   const handleReviewDownload = () => {
@@ -492,8 +493,8 @@ const ProductDetail = () => {
                   <td>{review.title}</td>
                   <td style={{ width: "50%" }}>{review.content}</td>
                   <td>{review.user_name}</td>
-                  <td style={{ color: review.good_or_bad == 1 ? 'green' : 'red' }}>
-                    {review.good_or_bad === '1' ? '긍정' : '부정'}
+                  <td style={{ color: review.good_or_bad == 1 ? 'green' : review.good_or_bad === '0' ? 'red' : 'gray' }}>
+                    {review.good_or_bad === '1' ? '긍정' : review.good_or_bad === '0' ? '부정' : '분석 X'}
                   </td>
                   <td>{review.date}</td>
                   <td>

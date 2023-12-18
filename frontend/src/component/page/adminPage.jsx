@@ -149,14 +149,21 @@ const AdminPage = () => {
     setState(tab);
   };
 
-  const updateUserStatus = (userId, status) => {
+  const updateUserStatus = (e, userId, status) => {
+    const isChecked = e.target.checked;
     const user = {userId : userId, status: status};
 
-    if(selectedRows.filter(user => user.userId == userId).length === 0) {
-      setSelectedRows([...selectedRows, user]);
-      setCount(count+1);
-    } else {
-      setSelectedRows([...(selectedRows.filter(user => user.userId !== userId)), user]);
+    if (isChecked) {
+      if(selectedRows.filter(user => user.userId == userId).length === 0) {
+        setSelectedRows([...selectedRows, user]);
+        setCount(count+1);
+      } else {
+        setSelectedRows([...(selectedRows.filter(user => user.userId !== userId)), user]);
+        setCount(count-1);
+      }
+    } 
+    else {
+      setSelectedRows([...(selectedRows.filter(user => user.userId !== userId))]);
       setCount(count-1);
     }
   };
@@ -210,7 +217,7 @@ const AdminPage = () => {
                     type="checkbox"
                     name={`user-${index}`}
                     checked={selectedRows.some(users => users.userId === user.userid && users.status === 1)}
-                    onChange={() => updateUserStatus(user.userid, user.status + 1)}
+                    onChange={(e) => updateUserStatus(e, user.userid, user.status + 1)}
                   />
                 </Td>
                 <Td>
@@ -218,7 +225,7 @@ const AdminPage = () => {
                     type="checkbox"
                     name={`user-${index}`}
                     checked={selectedRows.some(users => users.userId === user.userid && users.status === 2)}
-                    onChange={() => updateUserStatus(user.userid, user.status + 2)}
+                    onChange={(e) => updateUserStatus(e, user.userid, user.status + 2)}
                   />
                 </Td>
               </tr>

@@ -184,6 +184,7 @@ class DetailPaging(APIView):
         end = self.request.GET.get('end')
         search = self.request.GET.get('search')
 
+
         if state == 'all':
             if search == 'true':
                 review_data = Review.objects.filter(prd_id=prd_id, date__range=[start, end]).values().order_by('-review_num')
@@ -272,9 +273,17 @@ class EditReviewGoodToBadView(APIView):
                     review.good_or_bad = '0'
                 elif review.good_or_bad == '0':
                     review.good_or_bad = '1'
+                else :
+                    review.good_or_bad = '1'
                 review.save()
 
             update_reviews = Review.objects.filter(prd_id=prd_id)
+
+            update_product = Product.objects.get(id=prd_id)
+            update_product.good = update_reviews.filter(good_or_bad='1').count()
+            update_product.bad = update_reviews.filter(good_or_bad='0').count()
+            update_product.save()
+
             reviews_data = ReviewSerializer(update_reviews, many=True)
             response_data = {
                 'reviews': reviews_data.data,

@@ -25,6 +25,7 @@ def scrapping():
     # 옵션 설정
     options = webdriver.ChromeOptions()
     options.add_argument('headless')    # 백그라운드에서 실행 옵션
+    options.add_argument('--window-size=1200,800')  # 창 사이즈 설정
     options.add_argument("--disable-gpu")    # gpu 가속을 하지 않는 옵션
     options.add_argument("--disable-images")     # 이미지 로딩은 하지 않는 옵션
 
@@ -144,7 +145,7 @@ def scrapping():
         # ----------- 상품의 리뷰 크롤링 코드----------------------
 
         # 리뷰 버튼을 못찾는 상황이 발생 -> webdriverWait으로 리뷰 버튼을 찾을 때 까지 대기
-        WebDriverWait(driver, 5).until(
+        WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'goodsInfo-btn-review'))
         )
 

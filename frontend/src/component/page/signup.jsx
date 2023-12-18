@@ -276,7 +276,7 @@ const SignUp = () => {
           console.log('코드를 성공적으로 보냈습니다.');
           setResendCode(true);
           setIsVerificationCodeSent(true);
-          setVerificationCode(response.data.verification_code)
+          setVerificationCode(response.data.verification_code);
 
                    // 이메일이 성공적으로 전송되었으므로 오류 메시지 초기화
           setEmailErrorMessage("");

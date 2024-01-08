@@ -12,7 +12,6 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 #### `IDE`
 - PyCharm 2023.2.5
 - VSCode
-  <br>
 #### `Back-end`
 - Python `3.9.13`
 - Django `4.2.7`

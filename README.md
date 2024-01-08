@@ -9,9 +9,10 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 * 2명 : 최지성, 신지혜
 
 ## 💾 사용 기술
-`**IDE**`
+`IDE`
 - PyCharm 2023.2.5
 - VSCode
+  <br>
 `Back-end`
 - Python `3.9.13`
 - Django `4.2.7`

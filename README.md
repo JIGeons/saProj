@@ -12,7 +12,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 #### 스크래핑 서비스, 로그인, 회원가입, 관계자 페이지, 이메일 인증, 데이터 페이징,<br>엑셀 파일 생성&저장, 사용자 update
 - Selenium을 사용한 Scrapping Service
 - Celery를 활용한 Scrapping & GPT Service를 task로 scheduler에 등록
-- DjangoRestFramework를 활용한 로그인, 회원가입, 관계자 페이지 서비스
+- DjangoRestFramework를 활용한 로그인, 로그아웃, 회원가입, 관계자 페이지 서비스
 - DjangoRestFramework를 활용한 Serializer 생성
 - Django.core.mail을 활용한 이메일 인증 서비스
 - Django.core.paginator를 활용한 데이터 페이징 처리
@@ -20,10 +20,16 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - HttpResponse로 엑셀 파일을 응답으로 반환
 - Django Model을 사용한 사용자 정보 update
 - AbstractBaseUser를 상속받아 커스텀 사용자 정의 모델 구현
+- showModal을 활용한 엑셀 다운로드 화면 구현
+- Blob을 활용한 엑셀 파일 다운로드 구현
 ### 개발자 : 신지혜
-#### GPT 감성 평가 서비스, 상품 
+#### GPT 감성 평가 서비스, 상품 목록, 상품 상세, 그래프 표현
 - GPT API를 활용한 리뷰 감성 평가
-- 
+- React & Bootstrap을 활용한 상품 목록, 상품 상세 페이지 구현
+- showModal을 활용한 상품 리뷰 요약 구현
+- Chart를 활용한 상품 리뷰를 원형 그래프로 표현
+- Django Model을 사용한 상품 리뷰 평가 수정
+- Input type="date"를 활용한 날짜 검색 기능 구현
 
 ## 💾 사용 기술
 #### `IDE`

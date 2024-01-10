@@ -16,7 +16,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - Django.core.paginator를 활용한 데이터 페이징 처리
 - IO module & Pandas를 활용한 엑셀 파일 생성
 - HttpResponse로 엑셀 파일을 응답으로 반환
-- Django Model을 사용한 사용자 정보update
+- Django Model을 사용한 사용자 정보 update
 ### 개발자 : 신지혜
 - GPT API를 활용한 리뷰 감성 평가
 - 

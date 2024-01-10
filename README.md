@@ -13,6 +13,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - Selenium을 사용한 Scrapping Service
 - Celery를 활용한 Scrapping & GPT Service를 task로 scheduler에 등록
 - DjangoRestFramework를 활용한 로그인, 회원가입, 관계자 페이지 서비스
+- DjangoRestFramework를 활용한 Serializer 생성
 - Django.core.mail을 활용한 이메일 인증 서비스
 - Django.core.paginator를 활용한 데이터 페이징 처리
 - IO module & Pandas를 활용한 엑셀 파일 생성

@@ -22,6 +22,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - AbstractBaseUser를 상속받아 커스텀 사용자 정의 모델 구현
 - showModal을 활용한 엑셀 다운로드 화면 구현
 - Blob을 활용한 엑셀 파일 다운로드 구현
+- localStorage를 활용한 토큰 유지 기능 구현
 ### 개발자 : 신지혜
 #### GPT 감성 평가 서비스, 상품 목록, 상품 상세, 그래프 표현
 - GPT API를 활용한 리뷰 감성 평가

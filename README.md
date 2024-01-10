@@ -9,8 +9,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 * 2명 : 최지성, 신지혜
 ## 💿 당당 기능
 ### 개발자 : 최지성
-#### 스크래핑 서비스, 로그인, 회원가입, 관계자 페이지, 이메일 인증, 데이터 페이징,
-#### 엑셀 파일 생성&저장, 사용자 update
+#### 스크래핑 서비스, 로그인, 회원가입, 관계자 페이지, 이메일 인증, 데이터 페이징, '\n'엑셀 파일 생성&저장, 사용자 update
 - Selenium을 사용한 Scrapping Service
 - Celery를 활용한 Scrapping & GPT Service를 task로 scheduler에 등록
 - DjangoRestFramework를 활용한 로그인, 회원가입, 관계자 페이지 서비스

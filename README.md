@@ -21,6 +21,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - Django Model을 사용한 사용자 정보 update
 - AbstractBaseUser를 상속받아 사용자 정의 모델 정의
 ### 개발자 : 신지혜
+#### GPT 감성 평가 서비스, 상품 
 - GPT API를 활용한 리뷰 감성 평가
 - 
 

@@ -10,8 +10,14 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 ## 💿 당당 기능
 ### 개발자 : 최지성
 - Selenium을 사용한 Scrapping Service
+- DjangoRestFramework를 활용한 로그인, 회원가입, 관계자 페이지 서비스
+- Django.core.mail을 활용한 이메일 인증 서비스
+- Django.core.paginator를 활용한 데이터 페이징 처리
+- IO module & Pandas를 활용한 엑셀 파일 생성 & HttpResponse로 엑셀 파일을 응답으로 반환
 - 
 ### 개발자 : 신지혜
+- GPT API를 활용한 리뷰 감성 평가
+- 
 
 ## 💾 사용 기술
 #### `IDE`

@@ -32,6 +32,7 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - Selenium `4.15.2`
 - Beautifulsoup `4.12.2`
 - Openai `0.28.0`
+- Pandas
 - Celery `5.3.5`
 - Redis `5.0.1`
 - MySQL `8.0.34`
@@ -39,3 +40,5 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 - HTML
 - JavaScript
 - Bootstrap  
+
+## 📑 ERD 설계

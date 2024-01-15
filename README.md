@@ -65,5 +65,6 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 ### 상품 상세 페이지
 ![ProductDetail_Sequence_Diagram](https://github.com/JIGeons/saProj/assets/118729956/65c63c73-d27e-4541-93a0-d95b3e3e015e)
 
-## 🤎 아키텍처도
-## 🖤 시스템구성도
+## 🤎 시스템구성도
+![시스템 구성도](https://github.com/JIGeons/saProj/assets/118729956/f5e3763c-d020-4859-ba9a-ad8ea837acff)
+

@@ -56,13 +56,13 @@ Selenium으로 상품 리뷰를 스크래핑 하고, 해당 리뷰를 GPT API를
 
 ## 💙 핵심 기능
 ### 이 서비스의 핵심 기능은 상품 리뷰를 스크래핑하고 GPT에 질문을 해 감성평가를 하는 것 입니다.<br>부가 핵심 기능은 평가한 리뷰에 대해 회의 자료로 사용하기 위하여 그래프화 하고, 엑셀 저장입니다.<br>
-#### 스크래핑 서비스
+### 스크래핑 서비스
 ![Scrapping_Sequence_Diagram](https://github.com/JIGeons/saProj/assets/118729956/2129aafe-d2ca-41a6-86a1-3a444ec9c3f3)
 
-#### GPT 서비스
+### GPT 서비스
 ![GPT-Sequence_Diagram](https://github.com/JIGeons/saProj/assets/118729956/ea9f054a-7b4d-410e-8c09-82a20957741e)
 
-#### 상품 상세 페이지
+### 상품 상세 페이지
 ![ProductDetail_Sequence_Diagram](https://github.com/JIGeons/saProj/assets/118729956/65c63c73-d27e-4541-93a0-d95b3e3e015e)
 
 ## 🤎 아키텍처도
